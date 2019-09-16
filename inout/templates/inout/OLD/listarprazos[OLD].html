@@ -1,0 +1,49 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/principal.css' %}">
+</head>
+
+<body>
+	<h1>Prazos do Dia</h1>
+	{% if lista_de_prazos %}
+	<table>
+		<tr>
+			<th>Data Recebimento</th>
+			<th>Tipo</th>
+			<th>Número</th>
+			<th>Expedido</th>
+			<th>Tipo Prazo</th>
+			<th>Prazo</th>
+		</tr>
+		{% for documento in lista_de_prazos %}
+			<tr>
+				<td>{{ documento.data_de_entrada|date:'d/m/Y' }}</td>
+				<td>{{ documento.tipo_de_documento }}</a></td>
+				<td><a href="{% url 'inout:detalhesdocumento' documento.id %}">{{ documento.numero_do_documento }}</a></td>
+				<td>{{ documento.orgao_expedidor_do_documento }}</td>
+				<!--{% for prazo in documento.prazo_set.all %}
+					<td>{{ prazo.tipo_de_prazo }}</td>
+					<td>{{ prazo.data_do_prazo|date:'d/m/Y' }}</td>
+				{% endfor %}-->
+				<td>{% for prazo in documento.prazo_set.all %}
+					{% if prazo.data_do_prazo|date:'d/m/Y' != timezone.now|date:'d/m/Y' %}
+						{{ prazo.tipo_de_prazo }}
+					{% endif %}
+					<br/>
+				{% endfor %}</td>
+				<td>{% for prazo in documento.prazo_set.all %}
+					{{ prazo.data_do_prazo|date:'d/m/Y' }}
+					<br/>
+				{% endfor %}</td>
+			</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+		<li>vazio</li>
+	{% endif %}
+	<br/>
+	<a href="/inout/index.html">Início</a>
+</body>
+</html>

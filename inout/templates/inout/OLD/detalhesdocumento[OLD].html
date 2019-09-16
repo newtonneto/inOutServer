@@ -1,0 +1,36 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/principal.css' %}">
+</head>
+
+<body>
+	{% if documento %}
+		<label>Data Recebimento: </label>{{ documento.data_de_entrada|date:'d/m/Y' }}
+		<br/>
+		<label>Tipo: </label>{{ documento.tipo_de_documento }}
+		<br/>
+		<label>Número: </label>{{ documento.numero_do_documento }}
+		<br/>
+		<label>Expedido: </label>{{ documento.orgao_expedidor_do_documento }}
+		<br/>
+		<label>Assunto: </label>{{ documento.assunto_do_documento }}
+		<br/>
+		<label>Despacho: </label>{{ documento.despacho_do_documento }}
+		<br/>
+		<label>N° Processo: </label>{{ documento.numero_do_processo }}
+		<br/>
+		{% for prazo in documento.prazo_set.all %}
+			<label>Tipo de Prazo: </label>{{ prazo.tipo_de_prazo }}
+			<br/>
+			<label>Data do Prazo: </label>{{ prazo.data_do_prazo|date:'d/m/Y' }}
+			<br/>
+		{% endfor %}
+	{% else %}
+		<li>vazio</li>
+	{% endif %}
+	<br/>
+	<a href="/inout/index.html">Início</a>
+</body>
+</html>

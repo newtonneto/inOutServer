@@ -1,0 +1,33 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/principal.css' %}">
+</head>
+
+<body>
+	<h1>Documento cadastrados</h1>
+	{% if todos_os_documentos %}
+	<table>
+		<tr>
+			<th>Data Recebimento</th>
+			<th>Tipo</th>
+			<th>Número</th>
+			<th>Expedido</th>
+		</tr>
+		{% for documento in todos_os_documentos %}
+			<tr>
+				<td>{{ documento.data_de_entrada|date:'d/m/Y' }}</td>
+				<td>{{ documento.tipo_de_documento }}</a></td>
+				<td><a href="{% url 'inout:detalhesdocumento' documento.id %}">{{ documento.numero_do_documento }}</a></td>
+				<td>{{ documento.orgao_expedidor_do_documento }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+		<li>vazio</li>
+	{% endif %}
+	<br/>
+	<a href="/inout/index.html">Início</a>
+</body>
+</html>
