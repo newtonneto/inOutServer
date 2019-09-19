@@ -18,6 +18,7 @@
 
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/principal.css' %}" rel="stylesheet" type="text/css">
 
 </head>
 
@@ -45,6 +46,11 @@
                   </div>
                   <form class="user" action="{% url 'inout:valida_login' %}" method="POST">
                     {% csrf_token %}
+                    {% if erro %}
+                    <div id="credenciaisInvalidas">
+                      {{ erro }}
+                    </div>
+                    {% endif %}
                     <div class="form-group">
                       <input type="text" class="form-control form-control-user" id="exampleInputEmail" placeholder="Usuário" name="nome_de_usuario"/>
                     </div>

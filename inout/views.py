@@ -6,22 +6,48 @@ from django.utils import timezone
 from .models import Documento, Usuario
 from datetime import timedelta
 import datetime
-# Create your views here.
+
+#Metodos de controle
+
+#View responsável por chamar o template da página de login
 def login(request):
 	return render(request, 'inout/login.html')
 
+#View responsável por validar as credenciais recebidas no template de login
 def valida_login(request):
+	#O try/except é necessário pro caso do nome de usuário informado ser inválido, sem ele o código encontraria um erro ao tentar capturar informações de objetos que não existem (usuários inválidos)
 	try:
+		#Faz uma busca no banco pelo usuário informado, caso seja encontrado, o objeto será armazenado na variavel usuário
 		usuario = Usuario.objects.get(nome_de_usuario = request.POST['nome_de_usuario'])
+		#Verifica se a senha armazenada no objeto é a mesma informada no formulario de login
 		if (usuario.senha == request.POST['senha']):
+			#Armazena nos cookies o id do objeto usuário
 			request.session['usuario_id'] = usuario.id
 
-			#return render(request, 'inout/index.html')
+			#Redireciona para o index
 			return redirect(reverse('inout:index'))
 	except Usuario.DoesNotExist:
-		return HttpResponse("Iu Burro Man?")
-		#return redirect(reverse('inout:index'))
+		erro = {
+			'erro': "Credenciais Inválidas",
+		}
 
+		#Renderiza a página de login novamente, com o adicional de uma mensagem de erro
+		return render(request, 'inout/login.html', erro)
+
+#View responsável por deslogar um usuário
+def logout(request):
+	#O try/except é necessário pro caso de acontecer uma tentativa de deletar uma sessão que não existe
+	try:
+		#Exclui a sessão
+		del request.session['usuario_id']
+	except KeyError:
+		#Não faz nada
+		pass
+
+	#Redireciona para a página de login
+	return redirect(reverse('inout:login'))
+
+#View responsável por exibir a página inicial
 def index(request):
 	#Filtra todos os documentos com prazo na data de hoje
 	lista_de_documentos = prazos_do_dia()
@@ -32,6 +58,7 @@ def index(request):
 	#Filtra todos os documentos cadastrados no mês atual
 	feitos_mes = documentos_do_mes()
 
+	#O contexto armazena as 4 informações coletadas nas linhas acima, as mesmas serão exibidas nos 4 cards presentes na página inicial
 	contexto = {
 		'quantidade_de_prazos_do_dia': len(lista_de_documentos),
 		'feitos_hoje': len(feitos_hoje),
@@ -39,6 +66,7 @@ def index(request):
 		'feitos_mes': len(feitos_mes),
 	}
 
+	#Renderiza a página de login com o contexto gerado
 	return render(request, 'inout/index.html', contexto)
 
 def cadastrar(request):
