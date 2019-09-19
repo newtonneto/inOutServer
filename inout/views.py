@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
@@ -6,7 +6,6 @@ from django.utils import timezone
 from .models import Documento, Usuario
 from datetime import timedelta
 import datetime
-
 # Create your views here.
 def login(request):
 	return render(request, 'inout/login.html')
@@ -17,9 +16,11 @@ def valida_login(request):
 		if (usuario.senha == request.POST['senha']):
 			request.session['usuario_id'] = usuario.id
 
-			return render(request, 'inout/index.html')
+			#return render(request, 'inout/index.html')
+			return redirect(reverse('inout:index'))
 	except Usuario.DoesNotExist:
 		return HttpResponse("Iu Burro Man?")
+		#return redirect(reverse('inout:index'))
 
 def index(request):
 	#Filtra todos os documentos com prazo na data de hoje

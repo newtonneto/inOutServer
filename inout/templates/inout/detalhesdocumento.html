@@ -10,7 +10,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>inOut - </title>
+  <title>inOut - {{ documento.tipo_de_documento }} {{ documento.numero_do_documento }}</title>
 
   <!-- Custom fonts for this template-->
   <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -319,6 +319,8 @@
           <label>Despacho: </label> {{ documento.despacho_do_documento }}
           <br/>
           <label>N° Processo: </label> {{ documento.numero_do_processo }}
+          <br/>
+          <label>Cadastrado por: </label>
           <br/>
           <div class="row">
             <div class="col-lg-6 mb-4">
