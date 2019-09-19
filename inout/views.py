@@ -3,11 +3,24 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
 from django.utils import timezone
-from .models import Documento
+from .models import Documento, Usuario
 from datetime import timedelta
 import datetime
 
 # Create your views here.
+def login(request):
+	return render(request, 'inout/login.html')
+
+def valida_login(request):
+	try:
+		usuario = Usuario.objects.get(nome_de_usuario = request.POST['nome_de_usuario'])
+		if (usuario.senha == request.POST['senha']):
+			request.session['usuario_id'] = usuario.id
+
+			return render(request, 'inout/index.html')
+	except Usuario.DoesNotExist:
+		return HttpResponse("Iu Burro Man?")
+
 def index(request):
 	#Filtra todos os documentos com prazo na data de hoje
 	lista_de_documentos = prazos_do_dia()

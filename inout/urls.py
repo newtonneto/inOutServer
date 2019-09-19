@@ -4,6 +4,8 @@ from . import views
 app_name = "inout"
 urlpatterns = [
 	path('', views.index, name = 'index'),
+	path('login', views.login, name = 'login'),
+	path('valida_login', views.valida_login, name = 'valida_login'),
 	path('index', views.index, name = 'index'),
 	path('index.html', views.index, name = 'index'),
 	path('cadastrar', views.cadastrar, name = 'cadastrar'),
