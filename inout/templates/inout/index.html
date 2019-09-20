@@ -94,8 +94,8 @@
             <h6 class="collapse-header">Vizualização de Prazos</h6>
             <a class="collapse-item" href="{% url 'inout:listarprazos' %}">Todos</a>
             <a class="collapse-item" href="{% url 'inout:listarprazosdodia' %}">Hoje</a>
-            <a class="collapse-item" href="#">Semana</a>
-            <a class="collapse-item" href="#">Mês</a>
+            <a class="collapse-item" href="{% url 'inout:listar_documentos_da_semana' %}">Semana</a>
+            <a class="collapse-item" href="{% url 'inout:listar_documentos_do_mes' %}">Mês</a>
           </div>
         </div>
       </li>
