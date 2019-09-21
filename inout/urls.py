@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import url
 from . import views
 
 app_name = "inout"
@@ -24,4 +25,6 @@ urlpatterns = [
 	path('listar_documentos_do_dia', views.listar_documentos_do_dia, name = 'listar_documentos_do_dia'),
 	path('listar_documentos_da_semana', views.listar_documentos_da_semana, name = 'listar_documentos_da_semana'),
 	path('listar_documentos_do_mes', views.listar_documentos_do_mes, name = 'listar_documentos_do_mes'),
+	url(r'^api/data/$', views.dados_grafico_linha, name = 'api-data'),
+	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
 ]

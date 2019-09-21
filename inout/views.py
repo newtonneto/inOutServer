@@ -2,10 +2,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.urls import reverse
 from django.template import loader
-from django.utils import timezone
+#from django.utils import timezone
 from .models import Documento, Usuario
 from datetime import timedelta
+from rest_framework.views import APIView
+from rest_framework.response import Response
 import datetime
+import calendar
 import json
 
 #Metodos de controle
@@ -59,33 +62,16 @@ def index(request):
 	#Filtra todos os documentos cadastrados no mês atual
 	feitos_mes = documentos_do_mes()
 
-	dic = [
-		{'mes1' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes2' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes3' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes4' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes5' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes6' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes7' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes8' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes9' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes10' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes11' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes12' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))}
-	]
-
 	#O contexto armazena as 4 informações coletadas nas linhas acima, as mesmas serão exibidas nos 4 cards presentes na página inicial
 	contexto = {
 		'quantidade_de_prazos_do_dia': len(lista_de_documentos),
 		'feitos_hoje': len(feitos_hoje),
 		'feitos_semana': len(feitos_semana),
 		'feitos_mes': len(feitos_mes),
-		'json': json.dumps(dic)
 	}
 
 	#Renderiza a página de login com o contexto gerado
 	return render(request, 'inout/index.html', contexto)
-	#return JsonResponse({'dic' : dic})
 
 def cadastrar(request):
 	contexto = {
@@ -199,7 +185,74 @@ def listarprazosdodia(request):
 
 	return render(request, 'inout/listardocumentos.html', contexto)
 
+
+##### DADOS DOS GRÁFICOS - criar arquivo
+
+
+def dados_grafico_linha(request):
+	dados_grafico_linha = {
+		'mes1' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes2' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes3' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes4' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes5' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes6' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes7' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes8' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes9' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes10' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes11' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+		'mes12' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))
+	}
+
+	return JsonResponse(dados_grafico_linha)
+
+class chart_data_linha(APIView):
+	authentication_classes = []
+	permission_classes = []
+
+	def get(self, request, format=None):
+
+		documentosCadastrados = [
+			len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
+			0,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			10,
+			11,
+			12
+		]
+
+		meses = [
+			'Janeiro',
+			'Fevereiro',
+			'Março',
+			'Abril',
+			'Maio',
+			'Junho',
+			'Julho',
+			'Agosto',
+			'Setembro',
+			'Outubro',
+			'Novembro',
+			'Dezembro'
+		]
+
+		dados_grafico_linha = {
+			'documentosCadastrados': documentosCadastrados,
+			'meses': meses,
+		}
+
+		return Response(dados_grafico_linha)
+
+
 ##### FUNÇÕES - criar arquivo
+
 
 def prazos_do_dia():
 	lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today())
