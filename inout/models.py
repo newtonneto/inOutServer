@@ -21,3 +21,7 @@ class Prazo(models.Model):
 	documento = models.ForeignKey(Documento, on_delete = models.CASCADE)
 	tipo_de_prazo = models.CharField(max_length = 20)
 	data_do_prazo = models.DateTimeField('Prazo')
+	prazo_encerrado = models.BooleanField(default = False)
+
+	def __str__(self):
+		return self.tipo_de_prazo

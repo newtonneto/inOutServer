@@ -27,4 +27,5 @@ urlpatterns = [
 	path('listar_documentos_do_mes', views.listar_documentos_do_mes, name = 'listar_documentos_do_mes'),
 	url(r'^api/data/$', views.dados_grafico_linha, name = 'api-data'),
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
+	url(r'^api/chart/pie/$', views.chart_data_pie.as_view()),
 ]

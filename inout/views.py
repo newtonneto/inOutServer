@@ -5,6 +5,7 @@ from django.template import loader
 #from django.utils import timezone
 from .models import Documento, Usuario
 from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
@@ -214,33 +215,34 @@ class chart_data_linha(APIView):
 	def get(self, request, format=None):
 
 		documentosCadastrados = [
-			len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-			0,
-			3,
-			4,
-			5,
-			6,
-			7,
-			8,
-			9,
-			10,
-			11,
-			12
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -11)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -10)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -9)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -8)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -7)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -6)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -5)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -4)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -3)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -2)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -1)).month)),
+			len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))
 		]
 
 		meses = [
-			'Janeiro',
-			'Fevereiro',
-			'Março',
-			'Abril',
-			'Maio',
-			'Junho',
-			'Julho',
-			'Agosto',
-			'Setembro',
-			'Outubro',
-			'Novembro',
-			'Dezembro'
+			#retorna_mes((datetime.date.today() + relativedelta(months = -11)).month) + "/" + str((datetime.date.today() + relativedelta(months = -11)).year),
+			retorna_mes((datetime.date.today() + relativedelta(months = -11)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -10)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -9)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -8)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -7)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -6)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -5)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -4)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -3)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -2)).month),
+			retorna_mes((datetime.date.today() + relativedelta(months = -1)).month),
+			retorna_mes(datetime.date.today().month)
 		]
 
 		dados_grafico_linha = {
@@ -250,6 +252,42 @@ class chart_data_linha(APIView):
 
 		return Response(dados_grafico_linha)
 
+class chart_data_pie(APIView):
+	authentication_classes = []
+	permission_classes = []
+
+	def get(self, request, format=None):
+
+		quantidadeTipoDocumento = [
+			len(Documento.objects.filter(tipo_de_documento = "Ofício")),
+			len(Documento.objects.filter(tipo_de_documento = "Ofício Circular")),
+			len(Documento.objects.filter(tipo_de_documento = "Memorando")),
+			len(Documento.objects.filter(tipo_de_documento = "Memorando Circular")),
+			len(Documento.objects.exclude(tipo_de_documento = "Ofício").exclude(tipo_de_documento = "Ofício Circular").exclude(tipo_de_documento = "Memorando").exclude(tipo_de_documento = "Memorando Circular"))
+			#len(Documento.objects.filter(tipo_de_documento = "Requerimento")),
+			#len(Documento.objects.filter(tipo_de_documento = "Mandado de Intimação")),
+			#len(Documento.objects.filter(tipo_de_documento = "Notificação")),
+			#len(Documento.objects.filter(tipo_de_documento = "Documento")),
+		]
+
+		tiposDeDocumento = [
+			"Ofício",
+			"Ofício Circular",
+			"Memorando",
+			"Memorando Circular",
+			"Outros",
+			#"Requerimento",
+			#"Mandado de Intimação",
+			#"Notificação",
+			#"Documento",
+		]
+
+		dados_grafico_pie = {
+			'quantidadeTipoDocumento': quantidadeTipoDocumento,
+			'tiposDeDocumento': tiposDeDocumento,
+		}
+
+		return Response(dados_grafico_pie)
 
 ##### FUNÇÕES - criar arquivo
 
@@ -274,5 +312,56 @@ def documentos_da_semana():
 #Retorna todos os documentos cadastrados no mês atual
 def documentos_do_mes():
 	feitos_mes = Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)
+	#feitos_mes = Documento.objects.filter(data_de_entrada__month = (datetime.date.today()-timedelta(weeks=4)).month)
+	#feitos_mes = Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -1)).month)
 
 	return feitos_mes
+
+def retorna_mes(mes_numero):
+	if (mes_numero == 1):
+
+		return "Janeiro"
+
+	elif (mes_numero == 2):
+
+		return "Fevereiro"
+
+	elif (mes_numero == 3):
+
+		return "Março"
+
+	elif (mes_numero == 4):
+
+		return "Abril"
+
+	elif (mes_numero == 5):
+
+		return "Maio"
+
+	elif (mes_numero == 6):
+
+		return "Junho"
+
+	elif (mes_numero == 7):
+
+		return "Julho"
+
+	elif (mes_numero == 8):
+
+		return "Agosto"
+
+	elif (mes_numero == 9):
+
+		return "Setembro"
+
+	elif (mes_numero == 10):
+
+		return "Outubro"
+
+	elif (mes_numero == 11):
+
+		return "Novembro"
+	
+	else:
+
+		return "Dezembro"
