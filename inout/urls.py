@@ -18,6 +18,7 @@ urlpatterns = [
 	path('listardocumentos.html', views.listardocumentos, name = 'listardocumentos'),
 	path('<int:documento_id>/detalhesdocumento', views.detalhesdocumento, name = 'detalhesdocumento'),
 	path('<int:documento_id>/detalhesdocumento.html', views.detalhesdocumento, name = 'detalhesdocumento'),
+	path('<int:documento_id>/<int:prazo_id>/alterar_status_prazo', views.alterar_status_prazo, name = 'alterar_status_prazo'),
 	path('listarprazos', views.listarprazos, name = 'listarprazos'),
 	path('listarprazos.html', views.listarprazos, name = 'listarprazos'),
 	path('listarprazosdodia', views.listarprazosdodia, name = 'listarprazosdodia'),

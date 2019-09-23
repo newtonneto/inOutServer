@@ -18,6 +18,7 @@
 
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/principal.css' %}" rel="stylesheet" type="text/css">
 
 </head>
 
@@ -333,15 +334,15 @@
                         <!--div class="col-lg-6 mb-4"-->
                           {% if prazo.prazo_encerrado == True %}
                             <div class="card bg-success text-white shadow">
-                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' >= now|date:'d/m/Y' %}
+                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' >= data_de_hoje|date:'d/m/Y' %}
                             <div class="card bg-warning text-white shadow">
-                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' < now|date:'d/m/Y' %}
+                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' < data_de_hoje|date:'d/m/Y' %}
                             <div class="card bg-danger text-white shadow">
                           {% endif %}
                               <div class="card-body">
                                 {{ prazo.data_do_prazo|date:'d/m/Y' }}
                               <div class="text-white-50 small">{{ prazo.tipo_de_prazo }}</div>
-                              <input class="bg-warning card text-white shadow" type="submit" value="Encerrar"/>
+                              <a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' prazo.id documento.id %}" class="bg-warning card text-white shadow" />Encerrar</a>
                               </div>
                               <!--input type="submit" value="Encerrar"/--> <!-- CASO O BOTÃO DENTRO N FUNCIONE, USAR ESSE -->
                             </div>

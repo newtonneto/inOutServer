@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
 #from django.utils import timezone
-from .models import Documento, Usuario
+from .models import Documento, Usuario, Prazo
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
@@ -161,6 +161,7 @@ def detalhesdocumento(request, documento_id):
 		documento = Documento.objects.get(pk = documento_id)
 		contexto = {
 			'documento': documento,
+			'data_de_hoje': datetime.date.today(),
 		}
 	except Documento.DoesNotExist:
 		raise Http404("Documento não ecziste")
@@ -186,6 +187,13 @@ def listarprazosdodia(request):
 
 	return render(request, 'inout/listardocumentos.html', contexto)
 
+def alterar_status_prazo(request, prazo_id, documento_id):
+	prazo = Prazo.objects.get(pk = prazo_id)
+	if (prazo.prazo_encerrado == False):
+		prazo.prazo_encerrado = True
+		prazo.save()
+
+	return redirect(reverse('inout:detalhesdocumento', args=[documento_id]))
 
 ##### DADOS DOS GRÁFICOS - criar arquivo
 
