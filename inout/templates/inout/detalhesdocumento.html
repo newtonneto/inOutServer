@@ -331,22 +331,37 @@
                     <div class="col-lg-6 mb-4">
                       <div class="row">
                       {% for prazo in documento.prazo_set.all %}
-                        <!--div class="col-lg-6 mb-4"-->
+                        <div class="col-lg-6 mb-4">
                           {% if prazo.prazo_encerrado == True %}
                             <div class="card bg-success text-white shadow">
-                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' >= data_de_hoje|date:'d/m/Y' %}
-                            <div class="card bg-warning text-white shadow">
-                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' < data_de_hoje|date:'d/m/Y' %}
-                            <div class="card bg-danger text-white shadow">
-                          {% endif %}
                               <div class="card-body">
                                 {{ prazo.data_do_prazo|date:'d/m/Y' }}
                               <div class="text-white-50 small">{{ prazo.tipo_de_prazo }}</div>
-                              <a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' prazo.id documento.id %}" class="bg-warning card text-white shadow" />Encerrar</a>
+                              <!--a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' documento.id prazo.id %}" class="bg-success card text-white shadow" />Encerrar</a-->
+                              <span class="bg-success card text-white shadow centralizaTexto" />Encerrado</span>
                               </div>
                               <!--input type="submit" value="Encerrar"/--> <!-- CASO O BOTÃO DENTRO N FUNCIONE, USAR ESSE -->
                             </div>
-                        <!--/div-->
+                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' >= data_de_hoje|date:'d/m/Y' %}
+                            <div class="card bg-warning text-white shadow">
+                              <div class="card-body">
+                                {{ prazo.data_do_prazo|date:'d/m/Y' }}
+                              <div class="text-white-50 small">{{ prazo.tipo_de_prazo }}</div>
+                              <a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' documento.id prazo.id %}" class="bg-warning card text-white shadow centralizaTexto" />Encerrar</a>
+                              </div>
+                              <!--input type="submit" value="Encerrar"/--> <!-- CASO O BOTÃO DENTRO N FUNCIONE, USAR ESSE -->
+                            </div>
+                          {% elif prazo.prazo_encerrado == False and prazo.data_do_prazo|date:'d/m/Y' < data_de_hoje|date:'d/m/Y' %}
+                            <div class="card bg-danger text-white shadow">
+                              <div class="card-body">
+                                {{ prazo.data_do_prazo|date:'d/m/Y' }}
+                              <div class="text-white-50 small">{{ prazo.tipo_de_prazo }}</div>
+                              <a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' documento.id prazo.id %}" class="bg-danger card text-white shadow centralizaTexto" />Encerrar</a>
+                              </div>
+                              <!--input type="submit" value="Encerrar"/--> <!-- CASO O BOTÃO DENTRO N FUNCIONE, USAR ESSE -->
+                            </div>
+                          {% endif %}
+                        </div>
                       {% endfor %}
                       </div>
                     </div>

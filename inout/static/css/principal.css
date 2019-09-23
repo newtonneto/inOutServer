@@ -3,6 +3,10 @@
 	color: inherit;
 }
 
+.centralizaTexto {
+	text-align: center;
+}
+
 #credenciaisInvalidas {
 	color: red;
 	text-align: center;

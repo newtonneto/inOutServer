@@ -114,7 +114,8 @@ def salvarcadastro(request):
 		except:
   			print("Prazo 03 não utilizado")
 
-		return HttpResponseRedirect(reverse('inout:index'))
+		#return HttpResponseRedirect(reverse('inout:index'))
+		return redirect(reverse('inout:cadastrar'))
 
 #Retorna todos os documentos cadastrados no sistema
 def listardocumentos(request):
@@ -178,7 +179,8 @@ def listarprazos(request):
 	return render(request, 'inout/listardocumentos.html', contexto)
 
 def listarprazosdodia(request):
-	lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today()) #Depois de validar, substituir por função prazos_do_dia
+	#lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today()) #Depois de validar, substituir por função prazos_do_dia
+	lista_de_documentos = prazos_do_dia()
 
 	contexto = {
 		'titulo': "Prazos de hoje",
@@ -187,13 +189,15 @@ def listarprazosdodia(request):
 
 	return render(request, 'inout/listardocumentos.html', contexto)
 
-def alterar_status_prazo(request, prazo_id, documento_id):
-	prazo = Prazo.objects.get(pk = prazo_id)
+def alterar_status_prazo(request, documento_id, prazo_id):
+	documento = Documento.objects.get(pk = documento_id)
+	prazo = documento.prazo_set.get(pk = prazo_id)
+
 	if (prazo.prazo_encerrado == False):
 		prazo.prazo_encerrado = True
 		prazo.save()
 
-	return redirect(reverse('inout:detalhesdocumento', args=[documento_id]))
+	return redirect(reverse('inout:detalhesdocumento', args=[documento.id]))
 
 ##### DADOS DOS GRÁFICOS - criar arquivo
 
