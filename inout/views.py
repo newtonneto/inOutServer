@@ -306,6 +306,11 @@ class chart_data_pie(APIView):
 
 def prazos_do_dia():
 	lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today())
+	#lista_de_prazos = Prazo.objects.filter(data_do_prazo = datetime.date.today())
+
+	#for prazo in lista_de_prazos
+		#if (prazo.prazo_encerrado == True):
+
 
 	return lista_de_documentos
 
