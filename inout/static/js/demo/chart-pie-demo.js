@@ -3,7 +3,7 @@ Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,Bli
 Chart.defaults.global.defaultFontColor = '#858796';
 
 //Link da view que retorna o JSON com os dados
-var endpoint = 'http://localhost:8000/inout/api/chart/pie/'
+var endpoint = 'http://localhost:8000/api/chart/pie/'
 var data = []
 var labels = [];
 
@@ -49,7 +49,7 @@ function setChartPie() {
         caretPadding: 10,
       },
       legend: {
-        display: false
+        display: true
       },
       cutoutPercentage: 80,
     },

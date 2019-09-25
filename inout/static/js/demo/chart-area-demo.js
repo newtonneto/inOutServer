@@ -27,7 +27,7 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 }
 
 //Link da view que retorna o JSON com os dados
-var endpoint = 'http://localhost:8000/inout/api/chart/data/'
+var endpoint = 'http://localhost:8000/api/chart/data/'
 var cadastrosPorMes = []
 var labels = [];
 $.ajax({

@@ -226,36 +226,52 @@ class chart_data_linha(APIView):
 
 	def get(self, request, format=None):
 
-		documentosCadastrados = [
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -11)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -10)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -9)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -8)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -7)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -6)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -5)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -4)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -3)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -2)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -1)).month)),
-			len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))
-		]
+		data_de_hoje = datetime.date.today()
 
-		meses = [
-			#retorna_mes((datetime.date.today() + relativedelta(months = -11)).month) + "/" + str((datetime.date.today() + relativedelta(months = -11)).year),
-			retorna_mes((datetime.date.today() + relativedelta(months = -11)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -10)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -9)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -8)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -7)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -6)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -5)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -4)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -3)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -2)).month),
-			retorna_mes((datetime.date.today() + relativedelta(months = -1)).month),
-			retorna_mes(datetime.date.today().month)
-		]
+		#documentosCadastrados = [
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -11)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -10)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -9)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -8)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -7)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -6)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -5)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -4)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -3)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -2)).month)),
+			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -1)).month)),
+			#len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))
+		#]
+
+		documentosCadastrados = []
+
+		for i in range(-11, 0, 1):
+			documentosCadastrados.append(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = i)).month).count())
+
+		documentosCadastrados.append(len(Documento.objects.filter(data_de_entrada__month = data_de_hoje.month)))
+
+		# meses = [
+		# 	#retorna_mes((datetime.date.today() + relativedelta(months = -11)).month) + "/" + str((datetime.date.today() + relativedelta(months = -11)).year),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -11)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -10)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -9)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -8)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -7)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -6)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -5)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -4)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -3)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -2)).month),
+		# 	retorna_mes((datetime.date.today() + relativedelta(months = -1)).month),
+		# 	retorna_mes(datetime.date.today().month)
+		# ]
+
+		meses = []
+
+		for i in range(-11, 0, 1):
+			meses.append(retorna_mes((data_de_hoje + relativedelta(months = i)).month))
+
+		meses.append(retorna_mes(datetime.date.today().month))
 
 		dados_grafico_linha = {
 			'documentosCadastrados': documentosCadastrados,
