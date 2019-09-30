@@ -55,7 +55,7 @@ ROOT_URLCONF = 'inOutServer.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [r'D:\Izzy_New2\Django Projects\inOutServer\inout\templates\inout'],
+        'DIRS': [BASE_DIR + '/inout/templates/inout'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

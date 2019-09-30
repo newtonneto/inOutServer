@@ -1,9 +1,9 @@
 from django.db import models
 
 # Create your models here.
-class Usuario(models.Model):
+""" class Usuario(models.Model):
 	nome_de_usuario = models.CharField(max_length = 20)
-	senha = models.CharField(max_length = 16)
+	senha = models.CharField(max_length = 16) """
 
 class Documento(models.Model):
 	data_de_entrada = models.DateTimeField('Data de Entrada')

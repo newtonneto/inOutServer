@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.urls import reverse
 from django.template import loader
 #from django.utils import timezone
-from .models import Documento, Usuario, Prazo
+from .models import Documento, Prazo #, Usuario
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
-import calendar
 import json
 
 #Metodos de controle
@@ -20,7 +21,20 @@ def login(request):
 
 #View responsável por validar as credenciais recebidas no template de login
 def valida_login(request):
-	#O try/except é necessário pro caso do nome de usuário informado ser inválido, sem ele o código encontraria um erro ao tentar capturar informações de objetos que não existem (usuários inválidos)
+	user = authenticate(username = request.POST['nome_de_usuario'], password = request.POST['senha'])
+
+	if user is not None:
+		request.session['usuario_id'] = user.id
+		return redirect(reverse('inout:index'))
+	else:
+		erro = {
+			'erro': "Credenciais Inválidas",
+		}
+
+		#Renderiza a página de login novamente, com o adicional de uma mensagem de erro
+		return render(request, 'inout/login.html', erro)
+
+	"""#O try/except é necessário pro caso do nome de usuário informado ser inválido, sem ele o código encontraria um erro ao tentar capturar informações de objetos que não existem (usuários inválidos)
 	try:
 		#Faz uma busca no banco pelo usuário informado, caso seja encontrado, o objeto será armazenado na variavel usuário
 		usuario = Usuario.objects.get(nome_de_usuario = request.POST['nome_de_usuario'])
@@ -37,7 +51,7 @@ def valida_login(request):
 		}
 
 		#Renderiza a página de login novamente, com o adicional de uma mensagem de erro
-		return render(request, 'inout/login.html', erro)
+		return render(request, 'inout/login.html', erro) """
 
 #View responsável por deslogar um usuário
 def logout(request):
