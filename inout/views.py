@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.urls import reverse
 from django.template import loader
-#from django.utils import timezone
-from .models import Documento, Prazo #, Usuario
+from .models import Documento, Prazo
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
@@ -16,15 +16,16 @@ import json
 #Metodos de controle
 
 #View responsável por chamar o template da página de login
-def login(request):
+def login_view(request):
 	return render(request, 'inout/login.html')
 
 #View responsável por validar as credenciais recebidas no template de login
 def valida_login(request):
-	user = authenticate(username = request.POST['nome_de_usuario'], password = request.POST['senha'])
+	user = authenticate(request, username = request.POST['nome_de_usuario'], password = request.POST['senha'])
 
 	if user is not None:
-		request.session['usuario_id'] = user.id
+		login(request, user)
+		#request.session['user_id'] = user.id
 		return redirect(reverse('inout:index'))
 	else:
 		erro = {
@@ -34,39 +35,22 @@ def valida_login(request):
 		#Renderiza a página de login novamente, com o adicional de uma mensagem de erro
 		return render(request, 'inout/login.html', erro)
 
-	"""#O try/except é necessário pro caso do nome de usuário informado ser inválido, sem ele o código encontraria um erro ao tentar capturar informações de objetos que não existem (usuários inválidos)
-	try:
-		#Faz uma busca no banco pelo usuário informado, caso seja encontrado, o objeto será armazenado na variavel usuário
-		usuario = Usuario.objects.get(nome_de_usuario = request.POST['nome_de_usuario'])
-		#Verifica se a senha armazenada no objeto é a mesma informada no formulario de login
-		if (usuario.senha == request.POST['senha']):
-			#Armazena nos cookies o id do objeto usuário
-			request.session['usuario_id'] = usuario.id
-
-			#Redireciona para o index
-			return redirect(reverse('inout:index'))
-	except Usuario.DoesNotExist:
-		erro = {
-			'erro': "Credenciais Inválidas",
-		}
-
-		#Renderiza a página de login novamente, com o adicional de uma mensagem de erro
-		return render(request, 'inout/login.html', erro) """
-
 #View responsável por deslogar um usuário
-def logout(request):
+def logout_view(request):
 	#O try/except é necessário pro caso de acontecer uma tentativa de deletar uma sessão que não existe
 	try:
 		#Exclui a sessão
-		del request.session['usuario_id']
+		logout(request)
+		#del request.session['user_id']
 	except KeyError:
 		#Não faz nada
 		pass
 
 	#Redireciona para a página de login
-	return redirect(reverse('inout:login'))
+	return redirect(reverse('inout:login_view'))
 
 #View responsável por exibir a página inicial
+@login_required
 def index(request):
 	#Filtra todos os documentos com prazo na data de hoje
 	lista_de_documentos = prazos_do_dia()
@@ -88,6 +72,7 @@ def index(request):
 	#Renderiza a página de login com o contexto gerado
 	return render(request, 'inout/index.html', contexto)
 
+@login_required
 def cadastrar(request):
 	contexto = {
 		'titulo': "Cadastrar novo documento",
@@ -96,6 +81,7 @@ def cadastrar(request):
 	return render(request, 'inout/cadastrar.html', contexto)
 
 #def responsavel apenas por processar dados, não carrega um template de página, apenas faz o redirecionamento para uma outra def que possua um template
+@login_required
 def salvarcadastro(request):
 	if request.method == 'POST':
 		#Cada request.POST é responsável por capturar um dado especifico do formulário, esse dado é representado pelo seu name no input do form
@@ -119,19 +105,20 @@ def salvarcadastro(request):
 			prazo_02 = request.POST['prazo_02']
 			documento.prazo_set.create(tipo_de_prazo = tipo_02, data_do_prazo = prazo_02)
 		except:
-  			print("Prazo 02 não utilizado")
+			print("Prazo 02 não utilizado")
 		
 		try:
 			tipo_03 = request.POST['tipo_03']
 			prazo_03 = request.POST['prazo_03']
 			documento.prazo_set.create(tipo_de_prazo = tipo_03, data_do_prazo = prazo_03)
 		except:
-  			print("Prazo 03 não utilizado")
+			print("Prazo 03 não utilizado")
 
 		#return HttpResponseRedirect(reverse('inout:index'))
 		return redirect(reverse('inout:cadastrar'))
 
 #Retorna todos os documentos cadastrados no sistema
+@login_required
 def listardocumentos(request):
 	lista_de_documentos = Documento.objects.order_by('data_de_entrada')
 	contexto = {
@@ -142,6 +129,7 @@ def listardocumentos(request):
 	return render(request, 'inout/listardocumentos.html', contexto)
 
 #Retorna todos os documentos cadastrados hoje
+@login_required
 def listar_documentos_do_dia(request):
 	feitos_hoje = documentos_do_dia()
 	contexto = {
@@ -152,6 +140,7 @@ def listar_documentos_do_dia(request):
 	return render(request, 'inout/listardocumentos.html', contexto)
 
 #Retorna todos os documentos cadastrados na semana atual
+@login_required
 def listar_documentos_da_semana(request):
 	feitos_semana = documentos_da_semana()
 	contexto = {
@@ -162,6 +151,7 @@ def listar_documentos_da_semana(request):
 	return render(request, 'inout/listardocumentos.html', contexto)
 
 #Retorna todos os documentos cadastrados no mês atual
+@login_required
 def listar_documentos_do_mes(request):
 	feitos_mes = documentos_do_mes()
 	contexto = {
@@ -171,6 +161,7 @@ def listar_documentos_do_mes(request):
 
 	return render(request, 'inout/listardocumentos.html', contexto)
 
+@login_required
 def detalhesdocumento(request, documento_id):
 	try:
 		documento = Documento.objects.get(pk = documento_id)
@@ -183,6 +174,7 @@ def detalhesdocumento(request, documento_id):
 
 	return render(request, 'inout/detalhesdocumento.html', contexto)
 
+@login_required
 def listarprazos(request):
 	lista_de_documentos = Documento.objects.exclude(prazo__data_do_prazo__lt = datetime.date.today()).exclude(prazo__data_do_prazo = None)
 	contexto = {
@@ -192,6 +184,7 @@ def listarprazos(request):
 
 	return render(request, 'inout/listardocumentos.html', contexto)
 
+@login_required
 def listarprazosdodia(request):
 	#lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today()) #Depois de validar, substituir por função prazos_do_dia
 	lista_de_documentos = prazos_do_dia()
@@ -203,6 +196,7 @@ def listarprazosdodia(request):
 
 	return render(request, 'inout/listardocumentos.html', contexto)
 
+@login_required
 def alterar_status_prazo(request, documento_id, prazo_id):
 	documento = Documento.objects.get(pk = documento_id)
 	prazo = documento.prazo_set.get(pk = prazo_id)
@@ -213,26 +207,9 @@ def alterar_status_prazo(request, documento_id, prazo_id):
 
 	return redirect(reverse('inout:detalhesdocumento', args=[documento.id]))
 
+
 ##### DADOS DOS GRÁFICOS - criar arquivo
 
-
-def dados_grafico_linha(request):
-	dados_grafico_linha = {
-		'mes1' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes2' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes3' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes4' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes5' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes6' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes7' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes8' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes9' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes10' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes11' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)),
-		'mes12' : len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))
-	}
-
-	return JsonResponse(dados_grafico_linha)
 
 class chart_data_linha(APIView):
 	authentication_classes = []
@@ -241,45 +218,12 @@ class chart_data_linha(APIView):
 	def get(self, request, format=None):
 
 		data_de_hoje = datetime.date.today()
-
-		#documentosCadastrados = [
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -11)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -10)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -9)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -8)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -7)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -6)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -5)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -4)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -3)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -2)).month)),
-			# len(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = -1)).month)),
-			#len(Documento.objects.filter(data_de_entrada__month = datetime.date.today().month))
-		#]
-
 		documentosCadastrados = []
 
 		for i in range(-11, 0, 1):
 			documentosCadastrados.append(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = i)).month).count())
 
 		documentosCadastrados.append(len(Documento.objects.filter(data_de_entrada__month = data_de_hoje.month)))
-
-		# meses = [
-		# 	#retorna_mes((datetime.date.today() + relativedelta(months = -11)).month) + "/" + str((datetime.date.today() + relativedelta(months = -11)).year),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -11)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -10)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -9)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -8)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -7)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -6)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -5)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -4)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -3)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -2)).month),
-		# 	retorna_mes((datetime.date.today() + relativedelta(months = -1)).month),
-		# 	retorna_mes(datetime.date.today().month)
-		# ]
-
 		meses = []
 
 		for i in range(-11, 0, 1):
@@ -331,16 +275,12 @@ class chart_data_pie(APIView):
 
 		return Response(dados_grafico_pie)
 
+
 ##### FUNÇÕES - criar arquivo
 
 
 def prazos_do_dia():
 	lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today())
-	#lista_de_prazos = Prazo.objects.filter(data_do_prazo = datetime.date.today())
-
-	#for prazo in lista_de_prazos
-		#if (prazo.prazo_encerrado == True):
-
 
 	return lista_de_documentos
 
@@ -359,8 +299,6 @@ def documentos_da_semana():
 #Retorna todos os documentos cadastrados no mês atual
 def documentos_do_mes():
 	feitos_mes = Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)
-	#feitos_mes = Documento.objects.filter(data_de_entrada__month = (datetime.date.today()-timedelta(weeks=4)).month)
-	#feitos_mes = Documento.objects.filter(data_de_entrada__month = (datetime.date.today() + relativedelta(months = -1)).month)
 
 	return feitos_mes
 

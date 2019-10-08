@@ -4,11 +4,11 @@ from . import views
 
 app_name = "inout"
 urlpatterns = [
-	path('', views.login, name = 'login'),
-	path('login', views.login, name = 'login'),
-	path('login.html', views.login, name = 'login'),
+	path('', views.login_view, name = 'login_view'),
+	path('login', views.login_view, name = 'login_view'),
+	path('login.html', views.login_view, name = 'login_view'),
 	path('valida_login', views.valida_login, name = 'valida_login'),
-	path('logout', views.logout, name = 'logout'),
+	path('logout', views.logout_view, name = 'logout_view'),
 	path('index', views.index, name = 'index'),
 	path('index.html', views.index, name = 'index'),
 	path('cadastrar', views.cadastrar, name = 'cadastrar'),
@@ -26,7 +26,6 @@ urlpatterns = [
 	path('listar_documentos_do_dia', views.listar_documentos_do_dia, name = 'listar_documentos_do_dia'),
 	path('listar_documentos_da_semana', views.listar_documentos_da_semana, name = 'listar_documentos_da_semana'),
 	path('listar_documentos_do_mes', views.listar_documentos_do_mes, name = 'listar_documentos_do_mes'),
-	url(r'^api/data/$', views.dados_grafico_linha, name = 'api-data'),
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
 	url(r'^api/chart/pie/$', views.chart_data_pie.as_view()),
 ]
