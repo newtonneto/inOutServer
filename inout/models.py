@@ -1,11 +1,8 @@
 from django.db import models
-
-# Create your models here.
-""" class Usuario(models.Model):
-	nome_de_usuario = models.CharField(max_length = 20)
-	senha = models.CharField(max_length = 16) """
+from django.contrib.auth.models import User
 
 class Documento(models.Model):
+	usuario = models.ForeignKey(User, on_delete = models.CASCADE)
 	data_de_entrada = models.DateTimeField('Data de Entrada')
 	tipo_de_documento = models.CharField(max_length = 30)
 	numero_do_documento = models.CharField(max_length = 30)

@@ -72,12 +72,11 @@ def index(request):
 	#Renderiza a página de login com o contexto gerado
 	return render(request, 'inout/index.html', contexto)
 
-	""""Tambem é possivel verificar o login para permitir o acesso as paginas usando a seguinte estrutura:
+	""" Tambem é possivel verificar o login para permitir o acesso as paginas usando a seguinte estrutura:
 	if request.user.is_autheticated:
 		faz alguma coisa
 	else:
-		redireciona para outra página
-	""""
+		redireciona para outra página """
 
 @login_required
 def cadastrar(request):
@@ -92,14 +91,15 @@ def cadastrar(request):
 def salvarcadastro(request):
 	if request.method == 'POST':
 		#Cada request.POST é responsável por capturar um dado especifico do formulário, esse dado é representado pelo seu name no input do form
-		data_de_entrada = datetime.date.today()
-		tipo_de_documento = request.POST['tipo_de_documento']
-		numero_do_documento = request.POST['numero_do_documento']
-		orgao_expedidor_do_documento = request.POST['orgao_expedidor_do_documento']
-		assunto_do_documento = request.POST['assunto_do_documento']
-		despacho_do_documento = request.POST['despacho_do_documento']
-		numero_do_processo = request.POST['numero_do_processo']
-		documento = Documento(data_de_entrada = data_de_entrada, tipo_de_documento = tipo_de_documento, numero_do_documento = numero_do_documento, orgao_expedidor_do_documento = orgao_expedidor_do_documento, assunto_do_documento = assunto_do_documento, despacho_do_documento = despacho_do_documento, numero_do_processo = numero_do_processo)
+		documento = Documento()
+		documento.usuario = request.user
+		documento.data_de_entrada = datetime.date.today()
+		documento.tipo_de_documento = request.POST['tipo_de_documento']
+		documento.numero_do_documento = request.POST['numero_do_documento']
+		documento.orgao_expedidor_do_documento = request.POST['orgao_expedidor_do_documento']
+		documento.assunto_do_documento = request.POST['assunto_do_documento']
+		documento.despacho_do_documento = request.POST['despacho_do_documento']
+		documento.numero_do_processo = request.POST['numero_do_processo']
 		documento.save()
 
 		if (request.POST['prazo_01'] != ''):
