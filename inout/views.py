@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -11,7 +11,6 @@ from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
-import json
 
 #Metodos de controle
 
@@ -170,14 +169,11 @@ def listar_documentos_do_mes(request):
 
 @login_required
 def detalhesdocumento(request, documento_id):
-	try:
-		documento = Documento.objects.get(pk = documento_id)
-		contexto = {
-			'documento': documento,
-			'data_de_hoje': datetime.date.today(),
-		}
-	except Documento.DoesNotExist:
-		raise Http404("Documento não ecziste")
+	documento = get_object_or_404(Documento, pk = documento_id)
+	contexto = {
+		'documento': documento,
+		'data_de_hoje': datetime.date.today(),
+	}
 
 	return render(request, 'inout/detalhesdocumento.html', contexto)
 
@@ -193,7 +189,6 @@ def listarprazos(request):
 
 @login_required
 def listarprazosdodia(request):
-	#lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today()) #Depois de validar, substituir por função prazos_do_dia
 	lista_de_documentos = prazos_do_dia()
 
 	contexto = {
@@ -205,7 +200,7 @@ def listarprazosdodia(request):
 
 @login_required
 def alterar_status_prazo(request, documento_id, prazo_id):
-	documento = Documento.objects.get(pk = documento_id)
+	documento = get_object_or_404(Documento, pk = documento_id)
 	prazo = documento.prazo_set.get(pk = prazo_id)
 
 	if (prazo.prazo_encerrado == False):
@@ -256,7 +251,7 @@ class chart_data_pie(APIView):
 			len(Documento.objects.filter(tipo_de_documento = "Ofício Circular")),
 			len(Documento.objects.filter(tipo_de_documento = "Memorando")),
 			len(Documento.objects.filter(tipo_de_documento = "Memorando Circular")),
-			len(Documento.objects.exclude(tipo_de_documento = "Ofício").exclude(tipo_de_documento = "Ofício Circular").exclude(tipo_de_documento = "Memorando").exclude(tipo_de_documento = "Memorando Circular"))
+			len(Documento.objects.exclude(tipo_de_documento = "Ofício").exclude(tipo_de_documento = "Ofício Circular").exclude(tipo_de_documento = "Memorando").exclude(tipo_de_documento = "Memorando Circular")),
 			#len(Documento.objects.filter(tipo_de_documento = "Requerimento")),
 			#len(Documento.objects.filter(tipo_de_documento = "Mandado de Intimação")),
 			#len(Documento.objects.filter(tipo_de_documento = "Notificação")),
@@ -310,50 +305,6 @@ def documentos_do_mes():
 	return feitos_mes
 
 def retorna_mes(mes_numero):
-	if (mes_numero == 1):
+	lista = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
 
-		return "Janeiro"
-
-	elif (mes_numero == 2):
-
-		return "Fevereiro"
-
-	elif (mes_numero == 3):
-
-		return "Março"
-
-	elif (mes_numero == 4):
-
-		return "Abril"
-
-	elif (mes_numero == 5):
-
-		return "Maio"
-
-	elif (mes_numero == 6):
-
-		return "Junho"
-
-	elif (mes_numero == 7):
-
-		return "Julho"
-
-	elif (mes_numero == 8):
-
-		return "Agosto"
-
-	elif (mes_numero == 9):
-
-		return "Setembro"
-
-	elif (mes_numero == 10):
-
-		return "Outubro"
-
-	elif (mes_numero == 11):
-
-		return "Novembro"
-	
-	else:
-
-		return "Dezembro"
+	return lista[mes_numero - 1]
