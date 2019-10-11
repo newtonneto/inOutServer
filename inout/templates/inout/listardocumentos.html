@@ -52,6 +52,7 @@
                           {{ prazo.data_do_prazo|date:'d/m/Y' }}
                           <br/>
                         {% endfor %}</td>
+                        <td><a href="{% url 'inout:editar_documento' documento.id %}">Editar</a></td>
                       </tr>
                     {% endfor %}
                   </tbody>

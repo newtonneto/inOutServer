@@ -123,6 +123,16 @@ def salvarcadastro(request):
 		#return HttpResponseRedirect(reverse('inout:index'))
 		return redirect(reverse('inout:cadastrar'))
 
+#Retorna um formulario preenchido com as informações de um documento já cadastrado
+def editar_documento(request, documento_id):
+	documento = get_object_or_404(Documento, pk = documento_id)
+	contexto = {
+		'titulo': "Editar " + documento.tipo_de_documento + " " + documento.numero_do_documento,
+		'documento': documento,
+	}
+
+	return render(request, 'inout/editar.html', contexto)
+
 #Retorna todos os documentos cadastrados no sistema
 @login_required
 def listardocumentos(request):

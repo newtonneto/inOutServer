@@ -1,0 +1,50 @@
+{% load staticfiles %}
+{% include "header.html" %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
+
+          <div class="col-lg-7">
+            <div class="p-5">
+              {% if documento %}
+              <form class="user" action="{% url 'inout:salvarcadastro' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="tipo_de_documento" name="tipo_de_documento" value="{{ documento.tipo_de_documento }}" required />
+                  </div>
+                  <div class="col-sm-6">
+                    <input type="text" class="form-control form-control-user" id="numero_do_documento" name="numero_do_documento" value="{{ documento.numero_do_documento }}" required />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-user" id="orgao_expedidor_do_documento" name="orgao_expedidor_do_documento" value="{{ documento.orgao_expedidor_do_documento }}" required />
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-user" id="assunto_do_documento" name="assunto_do_documento" value="{{ documento.assunto_do_documento }}" required />
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-user" id="despacho_do_documento" name="despacho_do_documento" value="{{ documento.despacho_do_documento }}" required />
+                </div>
+
+                <br/>
+                <div class="form-group row">
+                  <div class="col-sm-6">
+                    <input class="btn btn-primary btn-user btn-block" type="submit" name="Alterar"/>
+                  </div>
+                </div>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+{% include "footer.html" %}
