@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
 from .models import Documento, Prazo
@@ -16,7 +16,7 @@ import datetime
 
 #View responsável por chamar o template da página de login
 def login_view(request):
-	return render(request, 'inout/login.html')
+	return render(request, 'registration/login.html')
 
 #View responsável por validar as credenciais recebidas no template de login
 def valida_login(request):
@@ -32,7 +32,7 @@ def valida_login(request):
 		}
 
 		#Renderiza a página de login novamente, com o adicional de uma mensagem de erro
-		return render(request, 'inout/login.html', erro)
+		return render(request, 'registration/login.html', erro)
 
 #View responsável por deslogar um usuário
 def logout_view(request):
