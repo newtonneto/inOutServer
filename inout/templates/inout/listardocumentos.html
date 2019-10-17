@@ -38,18 +38,18 @@
                   <tbody>
                     {% for documento in lista_de_documentos %}
                       <tr>
-                        <td>{{ documento.data_de_entrada|date:'d/m/Y' }}</td>
-                        <td>{{ documento.tipo_de_documento }}</a></td>
-                        <td><a href="{% url 'inout:detalhesdocumento' documento.id %}">{{ documento.numero_do_documento }}</a></td>
-                        <td>{{ documento.orgao_expedidor_do_documento }}</td>
+                        <td>{{ documento.data_de_recebimento|date:'d/m/Y' }}</td>
+                        <td>{{ documento.tipo }}</a></td>
+                        <td><a href="{% url 'inout:detalhesdocumento' documento.id %}">{{ documento.numero }}</a></td>
+                        <td>{{ documento.emissor }}</td>
                         <td>{% for prazo in documento.prazo_set.all %}
-                          {% if prazo.data_do_prazo|date:'d/m/Y' != timezone.now|date:'d/m/Y' %}
-                            {{ prazo.tipo_de_prazo }}
-                          {% endif %}
+                          <!--{% if prazo.vencimento|date:'d/m/Y' != timezone.now|date:'d/m/Y' %}-->
+                            {{ prazo.tipo }}
+                          <!--{% endif %}-->
                           <br/>
                         {% endfor %}</td>
                         <td>{% for prazo in documento.prazo_set.all %}
-                          {{ prazo.data_do_prazo|date:'d/m/Y' }}
+                          {{ prazo.vencimento|date:'d/m/Y' }}
                           <br/>
                         {% endfor %}</td>
                         <td><a href="{% url 'inout:editar_documento' documento.id %}">Editar</a></td>
