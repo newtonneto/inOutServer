@@ -13,3 +13,9 @@
 	padding-bottom: 5px;
 	margin-top: -1.7em;
 }
+
+.form-control-user-alternative {
+	font-size: .8rem;
+    border-radius: 10rem;
+    height: 3.9em;
+}
