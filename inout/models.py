@@ -2,14 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Processo(models.Model):
-	numero = model.CharField(max_legth = 30)
+	numero = models.CharField(max_length = 30)
 
 	def __str__(self):
 		return self.numero
 
 class Documento(models.Model):
 	usuario = models.ForeignKey(User, on_delete = models.PROTECT)
-	processo = models.ForeignKey(User, on_delete = models.SET_NULL, null = True)
+	processo = models.ForeignKey(Processo, on_delete = models.SET_NULL, null = True)
 	data_de_recebimento = models.DateTimeField('Data de Entrada')
 	tipo = models.CharField(max_length = 30)
 	numero = models.CharField(max_length = 30)
@@ -46,7 +46,7 @@ class Livro(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	tipo = models.CharField(max_length = 10)
 	ano = models.DateTimeField('Ano do Livro')
-	volume = models.IntegerField(max_value = 10)
+	volume = models.IntegerField()
 
 	def __str__(self):
 		return "Protocolo {} {} Volume {}".format(self.tipo, self.ano, self.volume)
