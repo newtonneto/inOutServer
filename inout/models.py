@@ -11,7 +11,22 @@ class Documento(models.Model):
 	usuario = models.ForeignKey(User, on_delete = models.PROTECT)
 	processo = models.ForeignKey(Processo, on_delete = models.SET_NULL, null = True)
 	data_de_recebimento = models.DateTimeField('Data de Entrada')
-	tipo = models.CharField(max_length = 30)
+	tipos_choices = [
+		(0, 'Carta'),
+		(1, 'Convite'),
+		(2, 'Documento'),
+		(3, 'Email'),
+		(4, 'Mandado de Intimação'),
+		(5, 'Memorando'),
+		(6, 'Memorando Circular'),
+		(7, 'Movimentação da Solicitação'),
+		(8, 'Notificação'),
+		(9, 'Ofício'),
+		(10, 'Ofício Circular'),
+		(11, 'Outros')
+		(12, 'Requerimento'),	
+	]
+	tipo = models.IntegerField(choices = tipos_choices, default = 9)
 	numero = models.CharField(max_length = 30)
 	emissor = models.CharField(max_length = 150)
 	assunto = models.CharField(max_length = 1000)
