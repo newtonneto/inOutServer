@@ -23,8 +23,8 @@ class Documento(models.Model):
 		(8, 'Notificação'),
 		(9, 'Ofício'),
 		(10, 'Ofício Circular'),
-		(11, 'Outros')
-		(12, 'Requerimento'),	
+		(11, 'Requerimento'),
+		(12, 'Outros'),
 	]
 	tipo = models.IntegerField(choices = tipos_choices, default = 9)
 	numero = models.CharField(max_length = 30)
