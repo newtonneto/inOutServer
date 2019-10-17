@@ -126,7 +126,7 @@ def salvarcadastro(request):
 def editar_documento(request, documento_id):
 	documento = get_object_or_404(Documento, pk = documento_id)
 	contexto = {
-		'titulo': "Editar " + documento.tipo_de_documento + " " + documento.numero_do_documento,
+		'titulo': "Editar " + documento.tipo_do_documento() + " " + documento.numero,
 		'documento': documento,
 	}
 
@@ -212,8 +212,8 @@ def alterar_status_prazo(request, documento_id, prazo_id):
 	documento = get_object_or_404(Documento, pk = documento_id)
 	prazo = documento.prazo_set.get(pk = prazo_id)
 
-	if (prazo.prazo_encerrado == False):
-		prazo.prazo_encerrado = True
+	if (prazo.encerrado == False):
+		prazo.encerrado = True
 		prazo.save()
 
 	return redirect(reverse('inout:detalhesdocumento', args=[documento.id]))

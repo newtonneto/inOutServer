@@ -35,6 +35,9 @@ class Documento(models.Model):
 	def __str__(self):
 		return "{} {} - {}".format(self.tipo, self.numero, self.emissor)
 
+	def tipo_do_documento(self):
+		return self.tipos_choices[self.tipo][1]
+
 class Prazo(models.Model):
 	documento = models.ForeignKey(Documento, on_delete = models.CASCADE)
 	tipo = models.CharField(max_length = 20)

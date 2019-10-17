@@ -14,20 +14,20 @@
                 {% csrf_token %}
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="tipo_de_documento" name="tipo_de_documento" value="{{ documento.tipo_de_documento }}" required />
+                    <input type="text" class="form-control form-control-user" id="tipo_de_documento" name="tipo_de_documento" value="{{ documento.tipo }}" required />
                   </div>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="numero_do_documento" name="numero_do_documento" value="{{ documento.numero_do_documento }}" required />
+                    <input type="text" class="form-control form-control-user" id="numero_do_documento" name="numero_do_documento" value="{{ documento.numero }}" required />
                   </div>
                 </div>
                 <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="orgao_expedidor_do_documento" name="orgao_expedidor_do_documento" value="{{ documento.orgao_expedidor_do_documento }}" required />
+                  <input type="text" class="form-control form-control-user" id="orgao_expedidor_do_documento" name="orgao_expedidor_do_documento" value="{{ documento.emissor }}" required />
                 </div>
                 <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="assunto_do_documento" name="assunto_do_documento" value="{{ documento.assunto_do_documento }}" required />
+                  <input type="text" class="form-control form-control-user" id="assunto_do_documento" name="assunto_do_documento" value="{{ documento.assunto }}" required />
                 </div>
                 <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="despacho_do_documento" name="despacho_do_documento" value="{{ documento.despacho_do_documento }}" required />
+                  <input type="text" class="form-control form-control-user" id="despacho_do_documento" name="despacho_do_documento" value="{{ documento.despacho }}" required />
                 </div>
 
                 <br/>
