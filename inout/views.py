@@ -93,7 +93,7 @@ def salvarcadastro(request):
 		documento = Documento()
 		documento.usuario = request.user
 		documento.data_de_recebimento = datetime.date.today()
-		documento.tipo = request.POST['tipo_de_documento']
+		documento.tipo = int(request.POST['tipo_de_documento'])
 		documento.numero = request.POST['numero_do_documento']
 		documento.emissor = request.POST['orgao_expedidor_do_documento']
 		documento.assunto = request.POST['assunto_do_documento']
@@ -256,11 +256,11 @@ class chart_data_pie(APIView):
 	def get(self, request, format=None):
 
 		quantidadeTipoDocumento = [
-			len(Documento.objects.filter(tipo = "Ofício")),
-			len(Documento.objects.filter(tipo = "Ofício Circular")),
-			len(Documento.objects.filter(tipo = "Memorando")),
-			len(Documento.objects.filter(tipo = "Memorando Circular")),
-			len(Documento.objects.exclude(tipo = "Ofício").exclude(tipo = "Ofício Circular").exclude(tipo = "Memorando").exclude(tipo = "Memorando Circular")),
+			len(Documento.objects.filter(tipo = 9)),
+			len(Documento.objects.filter(tipo = 10)),
+			len(Documento.objects.filter(tipo = 5)),
+			len(Documento.objects.filter(tipo = 6)),
+			len(Documento.objects.exclude(tipo = 9).exclude(tipo = 10).exclude(tipo = 5).exclude(tipo = 6)),
 			#len(Documento.objects.filter(tipo_de_documento = "Requerimento")),
 			#len(Documento.objects.filter(tipo_de_documento = "Mandado de Intimação")),
 			#len(Documento.objects.filter(tipo_de_documento = "Notificação")),
