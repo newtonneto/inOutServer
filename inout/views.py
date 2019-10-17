@@ -92,31 +92,30 @@ def salvarcadastro(request):
 		#Cada request.POST é responsável por capturar um dado especifico do formulário, esse dado é representado pelo seu name no input do form
 		documento = Documento()
 		documento.usuario = request.user
-		documento.data_de_entrada = datetime.date.today()
-		documento.tipo_de_documento = request.POST['tipo_de_documento']
-		documento.numero_do_documento = request.POST['numero_do_documento']
-		documento.orgao_expedidor_do_documento = request.POST['orgao_expedidor_do_documento']
-		documento.assunto_do_documento = request.POST['assunto_do_documento']
-		documento.despacho_do_documento = request.POST['despacho_do_documento']
-		documento.numero_do_processo = request.POST['numero_do_processo']
+		documento.data_de_recebimento = datetime.date.today()
+		documento.tipo = request.POST['tipo_de_documento']
+		documento.numero = request.POST['numero_do_documento']
+		documento.emissor = request.POST['orgao_expedidor_do_documento']
+		documento.assunto = request.POST['assunto_do_documento']
+		documento.despacho = request.POST['despacho_do_documento']
 		documento.save()
 
 		if (request.POST['prazo_01'] != ''):
 			tipo_01 = request.POST['tipo_01']
 			prazo_01 = request.POST['prazo_01']
-			documento.prazo_set.create(tipo_de_prazo = tipo_01, data_do_prazo = prazo_01)
+			documento.prazo_set.create(tipo = tipo_01, vencimento = prazo_01)
 		
 		try:
 			tipo_02 = request.POST['tipo_02']
 			prazo_02 = request.POST['prazo_02']
-			documento.prazo_set.create(tipo_de_prazo = tipo_02, data_do_prazo = prazo_02)
+			documento.prazo_set.create(tipo = tipo_02, vencimento = prazo_02)
 		except:
 			print("Prazo 02 não utilizado")
 		
 		try:
 			tipo_03 = request.POST['tipo_03']
 			prazo_03 = request.POST['prazo_03']
-			documento.prazo_set.create(tipo_de_prazo = tipo_03, data_do_prazo = prazo_03)
+			documento.prazo_set.create(tipo = tipo_03, vencimento = prazo_03)
 		except:
 			print("Prazo 03 não utilizado")
 
@@ -136,7 +135,7 @@ def editar_documento(request, documento_id):
 #Retorna todos os documentos cadastrados no sistema
 @login_required
 def listardocumentos(request):
-	lista_de_documentos = Documento.objects.order_by('data_de_entrada')
+	lista_de_documentos = Documento.objects.order_by('data_de_recebimento')
 	contexto = {
 		'titulo': "Todos os documentos",
 		'lista_de_documentos': lista_de_documentos,
@@ -233,9 +232,9 @@ class chart_data_linha(APIView):
 		documentosCadastrados = []
 
 		for i in range(-11, 0, 1):
-			documentosCadastrados.append(Documento.objects.filter(data_de_entrada__month = (data_de_hoje + relativedelta(months = i)).month).count())
+			documentosCadastrados.append(Documento.objects.filter(data_de_recebimento__month = (data_de_hoje + relativedelta(months = i)).month).count())
 
-		documentosCadastrados.append(len(Documento.objects.filter(data_de_entrada__month = data_de_hoje.month)))
+		documentosCadastrados.append(len(Documento.objects.filter(data_de_recebimento__month = data_de_hoje.month)))
 		meses = []
 
 		for i in range(-11, 0, 1):
@@ -257,11 +256,11 @@ class chart_data_pie(APIView):
 	def get(self, request, format=None):
 
 		quantidadeTipoDocumento = [
-			len(Documento.objects.filter(tipo_de_documento = "Ofício")),
-			len(Documento.objects.filter(tipo_de_documento = "Ofício Circular")),
-			len(Documento.objects.filter(tipo_de_documento = "Memorando")),
-			len(Documento.objects.filter(tipo_de_documento = "Memorando Circular")),
-			len(Documento.objects.exclude(tipo_de_documento = "Ofício").exclude(tipo_de_documento = "Ofício Circular").exclude(tipo_de_documento = "Memorando").exclude(tipo_de_documento = "Memorando Circular")),
+			len(Documento.objects.filter(tipo = "Ofício")),
+			len(Documento.objects.filter(tipo = "Ofício Circular")),
+			len(Documento.objects.filter(tipo = "Memorando")),
+			len(Documento.objects.filter(tipo = "Memorando Circular")),
+			len(Documento.objects.exclude(tipo = "Ofício").exclude(tipo = "Ofício Circular").exclude(tipo = "Memorando").exclude(tipo = "Memorando Circular")),
 			#len(Documento.objects.filter(tipo_de_documento = "Requerimento")),
 			#len(Documento.objects.filter(tipo_de_documento = "Mandado de Intimação")),
 			#len(Documento.objects.filter(tipo_de_documento = "Notificação")),
@@ -292,25 +291,25 @@ class chart_data_pie(APIView):
 
 
 def prazos_do_dia():
-	lista_de_documentos = Documento.objects.filter(prazo__data_do_prazo = datetime.date.today())
+	lista_de_documentos = Documento.objects.filter(prazo__vencimento = datetime.date.today())
 
 	return lista_de_documentos
 
 #Retorna todos os documentos cadastrados no dia de hoje
 def documentos_do_dia():
-	feitos_hoje = Documento.objects.filter(data_de_entrada__day = datetime.date.today().day)
+	feitos_hoje = Documento.objects.filter(data_de_recebimento__day = datetime.date.today().day)
 
 	return feitos_hoje
 
 #Retorna todos os documentos cadastrados na semana atual
 def documentos_da_semana():
-	feitos_semana = Documento.objects.filter(data_de_entrada__week = datetime.date.today().isocalendar()[1])
+	feitos_semana = Documento.objects.filter(data_de_recebimento__week = datetime.date.today().isocalendar()[1])
 
 	return feitos_semana
 
 #Retorna todos os documentos cadastrados no mês atual
 def documentos_do_mes():
-	feitos_mes = Documento.objects.filter(data_de_entrada__month = datetime.date.today().month)
+	feitos_mes = Documento.objects.filter(data_de_recebimento__month = datetime.date.today().month)
 
 	return feitos_mes
 
