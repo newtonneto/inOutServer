@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
-from .models import Documento, Prazo
+from .models import Documento, Prazo, Processo
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
@@ -26,6 +26,7 @@ def valida_login(request):
 		login(request, user)
 		#request.session['user_id'] = user.id
 		return redirect(reverse('inout:index'))
+		#return HttpResponseRedirect(request.GET('next'))
 	else:
 		erro = {
 			'erro': "Credenciais Inválidas",
@@ -98,6 +99,20 @@ def salvarcadastro(request):
 		documento.emissor = request.POST['orgao_expedidor_do_documento']
 		documento.assunto = request.POST['assunto_do_documento']
 		documento.despacho = request.POST['despacho_do_documento']
+
+		try:
+			#Tenta recuperar o objeto do processo com o número informado no formulário
+			processo = Processo.objects.get(numero = request.POST['numero_do_processo'])
+			#Caso seja, o documento é associado ao processo
+			documento.processo = processo
+		except Processo.DoesNotExist:
+			#Caso não seja, é criado um novo processo, e então o documento é associado a ele
+			novo_processo = Processo()
+			novo_processo.numero = request.POST['numero_do_processo']
+			novo_processo.save()
+			documento.processo = novo_processo
+
+		#Salva o novo documento
 		documento.save()
 
 		if (request.POST['prazo_01'] != ''):
