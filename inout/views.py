@@ -16,17 +16,27 @@ import datetime
 
 #View responsável por chamar o template da página de login
 def login_view(request):
+	npag = request.GET.get(next)
+
 	return render(request, 'registration/login.html')
 
 #View responsável por validar as credenciais recebidas no template de login
 def valida_login(request):
 	user = authenticate(request, username = request.POST['nome_de_usuario'], password = request.POST['senha'])
+	print("VAI CARAI2")
+	print(request.POST.get('next', False))
+	print("VAI PLANETAAA2")
 
 	if user is not None:
 		login(request, user)
-		#request.session['user_id'] = user.id
-		return redirect(reverse('inout:index'))
-		#return HttpResponseRedirect(request.GET('next'))
+		#Recupera o parametro next
+		next = request.POST.get('next', False)
+
+		if next:
+			return render(request, "{}{}{}".format('inout', next, '.html'))
+		else:
+			return redirect(reverse('inout:index'))
+			#return HttpResponseRedirect(request.GET('next'))
 	else:
 		erro = {
 			'erro': "Credenciais Inválidas",
