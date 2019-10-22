@@ -6,77 +6,79 @@
 
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
-
-          <div class="col-lg-7">
-            <div class="p-5">
-              <form class="user" action="{% url 'inout:salvarcadastro' %}" method="POST">
-                {% csrf_token %}
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <!--input type="number" class="form-control form-control-user" id="tipo_de_documento" name="tipo_de_documento" placeholder="Tipo" required /-->
-                    <select class="form-control form-control-user-alternative" id="tipo_de_documento" name="tipo_de_documento" required />
-                      <option value="0">Carta</option>
-                      <option value="1">Convite</option>
-                      <option value="2">Documento</option>
-                      <option value="3">Email</option>
-                      <option value="4">Mandado de Intimação</option>
-                      <option value="5">Memorando</option>
-                      <option value="6">Memorando Circular</option>
-                      <option value="7">Movimentação da Solicitação</option>
-                      <option value="8">Notificação</option>
-                      <option value="9" selected>Ofício</option>
-                      <option value="10">Ofício Circular</option>
-                      <option value="11">Requerimento</option>
-                      <option value="12">Outros</option>
-                    </select>
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="numero_do_documento" name="numero_do_documento" placeholder="n°" required />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="orgao_expedidor_do_documento" name="orgao_expedidor_do_documento" placeholder="Expeditor" required />
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="assunto_do_documento" name="assunto_do_documento" placeholder="Assunto" required />
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control form-control-user" id="despacho_do_documento" name="despacho_do_documento" placeholder="Despacho" required />
-                </div>
-
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="numero_do_processo" name="numero_do_processo" placeholder="Processo n°" />
-                  </div>
-                </div>
-
-                <div class="input_fields_wrap">
-                  <div>
+          <div class="col-lg-12 mb-4">
+            <div class="card shadow mb-4">
+              <div class="col-lg-7">
+                <div class="p-5">
+                  <form class="user" action="{% url 'inout:salvarcadastro' %}" method="POST">
+                    {% csrf_token %}
                     <div class="form-group row">
                       <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input type="text" class="form-control form-control-user" id="tipo_01" name="tipo_01" placeholder="Tipo" />
+                        <!--input type="number" class="form-control form-control-user" id="tipo_de_documento" name="tipo_de_documento" placeholder="Tipo" required /-->
+                        <select class="form-control form-control-user-alternative" id="tipo_de_documento" name="tipo_de_documento" required />
+                          <option value="0">Carta</option>
+                          <option value="1">Convite</option>
+                          <option value="2">Documento</option>
+                          <option value="3">Email</option>
+                          <option value="4">Mandado de Intimação</option>
+                          <option value="5">Memorando</option>
+                          <option value="6">Memorando Circular</option>
+                          <option value="7">Movimentação da Solicitação</option>
+                          <option value="8">Notificação</option>
+                          <option value="9" selected>Ofício</option>
+                          <option value="10">Ofício Circular</option>
+                          <option value="11">Requerimento</option>
+                          <option value="12">Outros</option>
+                        </select>
                       </div>
                       <div class="col-sm-6">
-                        <input type="date" class="form-control form-control-user" id="prazo_01" name="prazo_01" placeholder="Data" />
+                        <input type="text" class="form-control form-control-user" id="numero_do_documento" name="numero_do_documento" placeholder="n°" required />
                       </div>
                     </div>
-                  </div>
+                    <div class="form-group">
+                      <input type="text" class="form-control form-control-user" id="orgao_expedidor_do_documento" name="orgao_expedidor_do_documento" placeholder="Expeditor" required />
+                    </div>
+                    <div class="form-group">
+                      <input type="text" class="form-control form-control-user" id="assunto_do_documento" name="assunto_do_documento" placeholder="Assunto" required />
+                    </div>
+                    <div class="form-group">
+                      <input type="text" class="form-control form-control-user" id="despacho_do_documento" name="despacho_do_documento" placeholder="Despacho" required />
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-sm-6 mb-3 mb-sm-0">
+                        <input type="text" class="form-control form-control-user" id="numero_do_processo" name="numero_do_processo" placeholder="Processo n°" />
+                      </div>
+                    </div>
+
+                    <div class="input_fields_wrap">
+                      <div>
+                        <div class="form-group row">
+                          <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="text" class="form-control form-control-user" id="tipo_01" name="tipo_01" placeholder="Tipo" />
+                          </div>
+                          <div class="col-sm-6">
+                            <input type="date" class="form-control form-control-user" id="prazo_01" name="prazo_01" placeholder="Data" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br/>
+                    <div class="form-group row">
+                      <div class="col-sm-6 mb-3 mb-sm-0">
+                        <button class="add_field_button btn btn-primary btn-user btn-block">Novo Prazo</button>
+                      </div>
+                      <div class="col-sm-6">
+                        <input class="btn btn-primary btn-user btn-block" type="submit" name="Cadastrar"/>
+                      </div>
+                    </div>
+                    <!--button class="add_field_button btn btn-primary btn-user btn-block">Novo Prazo</button>
+                    <input class="btn btn-primary btn-user btn-block" type="submit" name="Cadastrar"/-->
+                  </form>
                 </div>
-                <br/>
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <button class="add_field_button btn btn-primary btn-user btn-block">Novo Prazo</button>
-                  </div>
-                  <div class="col-sm-6">
-                    <input class="btn btn-primary btn-user btn-block" type="submit" name="Cadastrar"/>
-                  </div>
-                </div>
-                <!--button class="add_field_button btn btn-primary btn-user btn-block">Novo Prazo</button>
-                <input class="btn btn-primary btn-user btn-block" type="submit" name="Cadastrar"/-->
-              </form>
+              </div>
             </div>
           </div>
-
         </div>
         <!-- /.container-fluid -->
 
