@@ -33,7 +33,8 @@ def valida_login(request):
 		next = request.POST.get('next', False)
 
 		if next:
-			return render(request, "{}{}{}".format('inout', next, '.html'))
+			return redirect(reverse("{}{}".format('inout:', next.replace('/', ''))))
+			#return render(request, "{}{}{}".format('inout', next, '.html'))
 		else:
 			return redirect(reverse('inout:index'))
 			#return HttpResponseRedirect(request.GET('next'))
@@ -213,7 +214,7 @@ def detalhesdocumento(request, documento_id):
 
 @login_required
 def listarprazos(request):
-	lista_de_documentos = Documento.objects.exclude(prazo__data_do_prazo__lt = datetime.date.today()).exclude(prazo__data_do_prazo = None)
+	lista_de_documentos = Documento.objects.exclude(prazo__vencimento__lt = datetime.date.today()).exclude(prazo__data_do_prazo = None)
 	contexto = {
 		'titulo': "Prazos para vencer",
 		'lista_de_documentos': lista_de_documentos,
