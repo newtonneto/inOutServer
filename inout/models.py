@@ -12,25 +12,26 @@ class Documento(models.Model):
 	processo = models.ForeignKey(Processo, on_delete = models.SET_NULL, null = True)
 	data_de_recebimento = models.DateTimeField('Data de Entrada')
 	tipos_choices = [
-		(0, 'Carta'),
-		(1, 'Convite'),
-		(2, 'Documento'),
-		(3, 'Email'),
-		(4, 'Mandado de Intimação'),
-		(5, 'Memorando'),
-		(6, 'Memorando Circular'),
-		(7, 'Movimentação da Solicitação'),
-		(8, 'Notificação'),
-		(9, 'Ofício'),
-		(10, 'Ofício Circular'),
-		(11, 'Requerimento'),
-		(12, 'Outros'),
+		(1, 'Carta'),
+		(2, 'Convite'),
+		(3, 'Documento'),
+		(4, 'Email'),
+		(5, 'Mandado de Intimação'),
+		(6, 'Memorando'),
+		(7, 'Memorando Circular'),
+		(8, 'Movimentação da Solicitação'),
+		(9, 'Notificação'),
+		(10, 'Ofício'),
+		(11, 'Ofício Circular'),
+		(12, 'Requerimento'),
+		(13, 'Outro'),
 	]
 	tipo = models.IntegerField(choices = tipos_choices, default = 9)
 	numero = models.CharField(max_length = 30)
 	emissor = models.CharField(max_length = 150)
 	assunto = models.CharField(max_length = 1000)
 	despacho = models.CharField(max_length = 200)
+	entrega_pessoal = models.BooleanField(default = False)
 
 	def __str__(self):
 		return "{} {} - {}".format(self.tipo, self.numero, self.emissor)
@@ -40,9 +41,19 @@ class Documento(models.Model):
 
 class Prazo(models.Model):
 	documento = models.ForeignKey(Documento, on_delete = models.CASCADE)
-	tipo = models.CharField(max_length = 20)
+	tipos_choices = [
+		(1, 'Audiência'),
+		(2, 'Audiência Pública'),
+		(3, 'Evento'),
+		(4, 'Resposta'),
+		(5, 'Reunião'),
+		(6, 'Outro'),
+	]
+	tipo = models.IntegerField(choices = tipos_choices, default = 4)
 	vencimento = models.DateTimeField('Prazo')
 	encerrado = models.BooleanField(default = False)
+	dilacao = models.BooleanField(default = False)
+	quantidade_de_dilacoes = models.IntegerField()
 
 	def __str__(self):
 		return "{} {}".format(self.tipo, self.vencimento)
@@ -55,14 +66,26 @@ class Orgao(models.Model):
 
 class Setor(models.Model):
 	orgao = models.ForeignKey(Orgao, on_delete = models.PROTECT)
-	nome = models.CharField(max_length = 50)
+	nome_choices = [
+		(1, 'GAB'),
+		(2, 'DAG'),
+		(3, 'SAFL'),
+		(4, 'RH'),
+	]
+	nome = models.IntegerField(choices = nome_choices)
+	ativo = models.BooleanField(default = True)
 
 	def __str__(self):
 		return self.nome
 
 class Livro(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
-	tipo = models.CharField(max_length = 10)
+	tipos_choices = [
+		(1, "Interno"),
+		(2, "Externo"),
+		(3, "USF"),
+	]
+	tipo = models.IntegerField(choices = tipos_choices, default = 1)
 	ano = models.DateTimeField('Ano do Livro')
 	volume = models.IntegerField()
 
@@ -81,3 +104,4 @@ class Protocolo(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	pagina = models.ForeignKey(Pagina, on_delete = models.PROTECT)
 	entregue = models.BooleanField(default = False)
+	data_da_entrega = models.DateTimeField('Data da Entrega')
