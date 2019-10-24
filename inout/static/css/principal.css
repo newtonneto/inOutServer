@@ -14,8 +14,14 @@
 	margin-top: -1.7em;
 }
 
-.form-control-user-alternative {
+.form-control-user-alternative1 {
 	font-size: .8rem;
     border-radius: 10rem;
+    height: 3.9em;
+}
+
+.form-control-user-alternative2 {
+	font-size: .8rem;
+    border-radius: 1.8rem;
     height: 3.9em;
 }

@@ -36,9 +36,9 @@ CREATE TABLE Prazo(
     documento_id INTEGER NOT NULL,
     tipo INTEGER NOT NULL,
     vencimento DATETIME NOT NULL,
-    encerrado TINYINT NOT NULL,
-    dilacao TINYINT NOT NULL,
-    quantidade_de_dilacoes INTEGER,
+    encerrado TINYINT NOT NULL DEFAULT false,
+    dilacao TINYINT NOT NULL DEFAULT false,
+    quantidade_de_dilacoes INTEGER DEFAULT 0,
     PRIMARY KEY(id),
     FOREIGN KEY(documento_id) REFERENCES Documento(id)
 );
@@ -53,7 +53,7 @@ CREATE TABLE Setor(
 	id INTEGER NOT NULL,
     orgao_id INTEGER NOT NULL,
     nome INTEGER NOT NULL,
-    ativo TINYINT NOT NULL,
+    ativo TINYINT NOT NULL DEFAULT true,
     PRIMARY KEY(id),
     FOREIGN KEY(orgao_id) REFERENCES Orgao(id)
 );
@@ -64,6 +64,7 @@ CREATE TABLE Livro(
     tipo INTEGER NOT NULL,
     ano DATE NOT NULL,
     volume INTEGER NOT NULL,
+    encerrado TINYINT DEFAULT false,
     PRIMARY KEY(id),
     FOREIGN KEY(setor_id) REFERENCES Setor(id)
 );
@@ -82,7 +83,7 @@ CREATE TABLE Protocolo(
     setor_id INTEGER NOT NULL,
     pagina_id INTEGER NOT NULL,
     entregue TINYINT NOT NULL,
-    data_da_entrega DATE NOT NULL,
+    data_da_entrega DATE,
     PRIMARY KEY(id),
     FOREIGN KEY(documento_id) REFERENCES Documento(id),
     FOREIGN KEY(setor_id) REFERENCES Setor(id),

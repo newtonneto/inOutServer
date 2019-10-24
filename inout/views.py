@@ -214,7 +214,7 @@ def detalhesdocumento(request, documento_id):
 
 @login_required
 def listarprazos(request):
-	lista_de_documentos = Documento.objects.exclude(prazo__vencimento__lt = datetime.date.today()).exclude(prazo__data_do_prazo = None)
+	lista_de_documentos = Documento.objects.exclude(prazo__vencimento__lt = datetime.date.today()).exclude(prazo__vencimento = None)
 	contexto = {
 		'titulo': "Prazos para vencer",
 		'lista_de_documentos': lista_de_documentos,

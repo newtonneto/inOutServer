@@ -53,7 +53,7 @@ class Prazo(models.Model):
 	vencimento = models.DateTimeField('Prazo')
 	encerrado = models.BooleanField(default = False)
 	dilacao = models.BooleanField(default = False)
-	quantidade_de_dilacoes = models.IntegerField()
+	quantidade_de_dilacoes = models.IntegerField(default = 0)
 
 	def __str__(self):
 		return "{} {}".format(self.tipo, self.vencimento)
@@ -67,10 +67,43 @@ class Orgao(models.Model):
 class Setor(models.Model):
 	orgao = models.ForeignKey(Orgao, on_delete = models.PROTECT)
 	nome_choices = [
-		(1, 'GAB'),
-		(2, 'DAG'),
-		(3, 'SAFL'),
-		(4, 'RH'),
+		(1, 'AJUR'),
+		(2, 'APOIO AO GABINETE'),
+		(3, 'ASSCOM'),
+		(4, 'ASSTEC'),
+		(5, 'ATENDIMENTO'),
+		(6, 'DAG'),
+		(7, 'DASA'),
+		(8, 'DCRA'),
+		(9, 'DFUA'),
+		(10, 'DGSIG'),
+		(11, 'DLOS'),
+		(12, 'GABINETE'),
+		(13, 'INFORMATICA'),
+		(14, 'OUVIDORIA'),
+		(15, 'PROTOCOLO'),
+		(16, 'RH'),
+		(17, 'SAAG'),
+		(18, 'SAFL'),
+		(19, 'SAIPUA'),
+		(20, 'SANBIO'),
+		(21, 'SCALA'),
+		(22, 'SDI'),
+		(23, 'SGCT'),
+		(24, 'SGFA'),
+		(25, 'SGFU'),
+		(26, 'SJPI'),
+		(27, 'SLOPR'),
+		(28, 'SLOPU'),
+		(29, 'SLS'),
+		(30, 'SPASO'),
+		(31, 'SPATS'),
+		(32, 'SPPUA'),
+		(33, 'SZL'),
+		(34, 'SZN'),
+		(35, 'SZO'),
+		(36, 'SZS'),
+		(37, 'USF'),
 	]
 	nome = models.IntegerField(choices = nome_choices)
 	ativo = models.BooleanField(default = True)
@@ -88,6 +121,7 @@ class Livro(models.Model):
 	tipo = models.IntegerField(choices = tipos_choices, default = 1)
 	ano = models.DateTimeField('Ano do Livro')
 	volume = models.IntegerField()
+	encerrado = models.BooleanField(default = False)
 
 	def __str__(self):
 		return "Protocolo {} {} Volume {}".format(self.tipo, self.ano, self.volume)
@@ -104,4 +138,4 @@ class Protocolo(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	pagina = models.ForeignKey(Pagina, on_delete = models.PROTECT)
 	entregue = models.BooleanField(default = False)
-	data_da_entrega = models.DateTimeField('Data da Entrega')
+	data_da_entrega = models.DateTimeField('Data da Entrega', null = True)
