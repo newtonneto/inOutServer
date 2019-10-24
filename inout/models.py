@@ -26,7 +26,7 @@ class Documento(models.Model):
 		(12, 'Requerimento'),
 		(13, 'Outro'),
 	]
-	tipo = models.IntegerField(choices = tipos_choices, default = 9)
+	tipo = models.IntegerField(choices = tipos_choices, default = 10)
 	numero = models.CharField(max_length = 30)
 	emissor = models.CharField(max_length = 150)
 	assunto = models.CharField(max_length = 1000)
@@ -114,13 +114,13 @@ class Setor(models.Model):
 class Livro(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	tipos_choices = [
-		(1, "Interno"),
-		(2, "Externo"),
+		(1, "Externo"),
+		(2, "Interno"),
 		(3, "USF"),
 	]
-	tipo = models.IntegerField(choices = tipos_choices, default = 1)
+	tipo = models.IntegerField(choices = tipos_choices, default = 2)
 	ano = models.DateTimeField('Ano do Livro')
-	volume = models.IntegerField()
+	volume = models.IntegerField(default = 1)
 	encerrado = models.BooleanField(default = False)
 
 	def __str__(self):
@@ -135,7 +135,8 @@ class Pagina(models.Model):
 
 class Protocolo(models.Model):
 	documento = models.ForeignKey(Documento, on_delete = models.PROTECT)
-	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
+	setor_origem = models.ForeignKey(Setor, on_delete = models.PROTECT)
+	recebido_por = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	pagina = models.ForeignKey(Pagina, on_delete = models.PROTECT)
 	entregue = models.BooleanField(default = False)
 	data_da_entrega = models.DateTimeField('Data da Entrega', null = True)

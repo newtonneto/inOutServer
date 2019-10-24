@@ -17,30 +17,30 @@ CREATE TABLE Processo(
 
 CREATE TABLE Documento(
 	id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
-    processo_id INTEGER,
+    fk_user INTEGER NOT NULL,
+    fk_processo INTEGER,
 	data_de_recebimento DATE NOT NULL,
-    tipo INTEGER NOT NULL,
+    tipo INTEGER NOT NULL DEFAULT 10,
     numero VARCHAR(30) NOT NULL,
     emissor VARCHAR(50) NOT NULL,
     assunto VARCHAR(1000) NOT NULL,
     despacho VARCHAR(200) NOT NULL,
     entrega_pessoal TINYINT NOT NULL DEFAULT false,
     PRIMARY KEY(id),
-    FOREIGN KEY(user_id) REFERENCES User(id),
-    FOREIGN KEY(processo_id) REFERENCES Processo(id)
+    FOREIGN KEY(fk_user) REFERENCES User(id),
+    FOREIGN KEY(fk_processo) REFERENCES Processo(id)
 );
 
 CREATE TABLE Prazo(
 	id INTEGER NOT NULL,
-    documento_id INTEGER NOT NULL,
+    fk_documento INTEGER NOT NULL,
     tipo INTEGER NOT NULL,
     vencimento DATETIME NOT NULL,
     encerrado TINYINT NOT NULL DEFAULT false,
     dilacao TINYINT NOT NULL DEFAULT false,
     quantidade_de_dilacoes INTEGER DEFAULT 0,
     PRIMARY KEY(id),
-    FOREIGN KEY(documento_id) REFERENCES Documento(id)
+    FOREIGN KEY(fk_documento) REFERENCES Documento(id)
 );
 
 CREATE TABLE Orgao(
@@ -51,41 +51,43 @@ CREATE TABLE Orgao(
 
 CREATE TABLE Setor(
 	id INTEGER NOT NULL,
-    orgao_id INTEGER NOT NULL,
+    fk_orgao INTEGER NOT NULL,
     nome INTEGER NOT NULL,
     ativo TINYINT NOT NULL DEFAULT true,
     PRIMARY KEY(id),
-    FOREIGN KEY(orgao_id) REFERENCES Orgao(id)
+    FOREIGN KEY(fk_orgao) REFERENCES Orgao(id)
 );
 
 CREATE TABLE Livro(
 	id INTEGER NOT NULL,
-    setor_id INTEGER NOT NULL,
-    tipo INTEGER NOT NULL,
-    ano DATE NOT NULL,
-    volume INTEGER NOT NULL,
+    fk_setor INTEGER NOT NULL,
+    tipo INTEGER NOT NULL DEFAULT 2,
+    ano INTEGER NOT NULL,
+    volume INTEGER NOT NULL DEFAULT 1,
     encerrado TINYINT DEFAULT false,
     PRIMARY KEY(id),
-    FOREIGN KEY(setor_id) REFERENCES Setor(id)
+    FOREIGN KEY(fk_setor) REFERENCES Setor(id)
 );
 
 CREATE TABLE Pagina(
 	id INTEGER NOT NULL,
-    livro_id INTEGER NOT NULL,
+    fk_livro INTEGER NOT NULL,
     numero INTEGER NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(livro_id) REFERENCES Livro(id)
+    FOREIGN KEY(fk_livro) REFERENCES Livro(id)
 );
 
 CREATE TABLE Protocolo(
 	id INTEGER NOT NULL,
-    documento_id INTEGER NOT NULL,
-    setor_id INTEGER NOT NULL,
-    pagina_id INTEGER NOT NULL,
+    fk_documento INTEGER NOT NULL,
+    fk_setor_origem INTEGER NOT NULL,
+    fk_recebido_por INTEGER NOT NULL,
+    fk_pagina INTEGER NOT NULL,
     entregue TINYINT NOT NULL,
     data_da_entrega DATE,
     PRIMARY KEY(id),
-    FOREIGN KEY(documento_id) REFERENCES Documento(id),
-    FOREIGN KEY(setor_id) REFERENCES Setor(id),
-    FOREIGN KEY(pagina_id) REFERENCES Pagina(id)
+    FOREIGN KEY(fk_documento) REFERENCES Documento(id),
+    FOREIGN KEY(fk_setor_origem) REFERENCES Setor(id),
+    FOREIGN KEY(fk_recebido_por) REFERENCES User(id),
+    FOREIGN KEY(fk_pagina) REFERENCES Pagina(id)
 );
