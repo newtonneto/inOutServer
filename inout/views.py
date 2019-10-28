@@ -16,16 +16,12 @@ import datetime
 
 #View responsável por chamar o template da página de login
 def login_view(request):
-	npag = request.GET.get(next)
 
 	return render(request, 'registration/login.html')
 
 #View responsável por validar as credenciais recebidas no template de login
 def valida_login(request):
 	user = authenticate(request, username = request.POST['nome_de_usuario'], password = request.POST['senha'])
-	print("VAI CARAI2")
-	print(request.POST.get('next', False))
-	print("VAI PLANETAAA2")
 
 	if user is not None:
 		login(request, user)
@@ -244,6 +240,13 @@ def alterar_status_prazo(request, documento_id, prazo_id):
 
 	return redirect(reverse('inout:detalhesdocumento', args=[documento.id]))
 
+def error_404_view(request, exception):
+    
+    return render(request,'inout/404.html')
+
+def error_500_view(request):
+    
+    return render(request,'inout/500.html')
 
 ##### DADOS DOS GRÁFICOS - criar arquivo
 

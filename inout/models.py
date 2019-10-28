@@ -135,8 +135,9 @@ class Pagina(models.Model):
 
 class Protocolo(models.Model):
 	documento = models.ForeignKey(Documento, on_delete = models.PROTECT)
-	setor_origem = models.ForeignKey(Setor, on_delete = models.PROTECT)
-	recebido_por = models.ForeignKey(Setor, on_delete = models.PROTECT)
+	#Para utilizar duas chaves estrangeiras pro mesmo modelo é necessário utilizar o parametro 'related_name'
+	setor_origem = models.ForeignKey(Setor, related_name = 'setor_de_origem', on_delete = models.PROTECT)
+	setor_destino = models.ForeignKey(Setor, related_name = 'setor_de_destino', on_delete = models.PROTECT)
 	pagina = models.ForeignKey(Pagina, on_delete = models.PROTECT)
 	entregue = models.BooleanField(default = False)
 	data_da_entrega = models.DateTimeField('Data da Entrega', null = True)

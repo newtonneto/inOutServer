@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls import url, handler404, handler500
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('inout.urls')),
 ]
+
+handler404 = 'inout.views.error_404_view'
+handler500 = 'inout.views.error_500_view'
