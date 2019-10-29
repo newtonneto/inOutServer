@@ -114,7 +114,17 @@ class Setor(models.Model):
 class Lotacao(models.Model):
 	usuario = models.ForeignKey(User, on_delete = models.PROTECT)
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
-	cargo = models.CharField(max_length = 20)
+	cargo_choices = [
+		(1, "Arquiteto"),
+		(1, "Assistente Administrativo"),
+		(1, "Diretor"),
+		(1, "Estagiário"),
+		(1, "Fiscal"),
+		(1, "Recepcionista"),
+		(1, "Secretário"),
+		(1, "Técnico em Informática"),
+	]
+	cargo = models.IntegerField(choices = cargo_choices)
 	entrada = models.DateTimeField('Data de entrada na função')
 	saida = models.DateTimeField('Data de saída da função')
 

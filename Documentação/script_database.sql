@@ -58,6 +58,17 @@ CREATE TABLE Setor(
     FOREIGN KEY(fk_orgao) REFERENCES Orgao(id)
 );
 
+CREATE TABLE Lotacao(
+	id INTEGER NOT NULL,
+    fk_user INTEGER NOT NULL,
+    fk_setor INTEGER NOT NULL,
+    cargo INTEGER NOT NULL,
+    entrada DATE NOT NULL,
+    saida DATE,
+    FOREIGN KEY(fk_user) REFERENCES User(id),
+    FOREIGN KEY(fk_setor) REFERENCES Setor(id)
+);
+
 CREATE TABLE Livro(
 	id INTEGER NOT NULL,
     fk_setor INTEGER NOT NULL,

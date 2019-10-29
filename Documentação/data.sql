@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `documento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `documento` (
   `id` int(11) NOT NULL,
   `fk_user` int(11) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE `documento` (
   KEY `fk_processo` (`fk_processo`),
   CONSTRAINT `documento_ibfk_1` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id`),
   CONSTRAINT `documento_ibfk_2` FOREIGN KEY (`fk_processo`) REFERENCES `processo` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,7 +57,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `livro`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `livro` (
   `id` int(11) NOT NULL,
   `fk_setor` int(11) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE `livro` (
   PRIMARY KEY (`id`),
   KEY `fk_setor` (`fk_setor`),
   CONSTRAINT `livro_ibfk_1` FOREIGN KEY (`fk_setor`) REFERENCES `setor` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,12 +87,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `orgao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `orgao` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +111,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pagina`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `pagina` (
   `id` int(11) NOT NULL,
   `fk_livro` int(11) NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE `pagina` (
   PRIMARY KEY (`id`),
   KEY `fk_livro` (`fk_livro`),
   CONSTRAINT `pagina_ibfk_1` FOREIGN KEY (`fk_livro`) REFERENCES `livro` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,7 +138,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `prazo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `prazo` (
   `id` int(11) NOT NULL,
   `fk_documento` int(11) NOT NULL,
@@ -150,7 +150,7 @@ CREATE TABLE `prazo` (
   PRIMARY KEY (`id`),
   KEY `fk_documento` (`fk_documento`),
   CONSTRAINT `prazo_ibfk_1` FOREIGN KEY (`fk_documento`) REFERENCES `documento` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,12 +169,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `processo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `processo` (
   `id` int(11) NOT NULL,
   `numero` varchar(21) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,7 +193,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `protocolo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `protocolo` (
   `id` int(11) NOT NULL,
   `fk_documento` int(11) NOT NULL,
@@ -211,7 +211,7 @@ CREATE TABLE `protocolo` (
   CONSTRAINT `protocolo_ibfk_2` FOREIGN KEY (`fk_setor_origem`) REFERENCES `setor` (`id`),
   CONSTRAINT `protocolo_ibfk_3` FOREIGN KEY (`fk_setor_destino`) REFERENCES `setor` (`id`),
   CONSTRAINT `protocolo_ibfk_4` FOREIGN KEY (`fk_pagina`) REFERENCES `pagina` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -230,7 +230,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `setor`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `setor` (
   `id` int(11) NOT NULL,
   `fk_orgao` int(11) NOT NULL,
@@ -239,7 +239,7 @@ CREATE TABLE `setor` (
   PRIMARY KEY (`id`),
   KEY `fk_orgao` (`fk_orgao`),
   CONSTRAINT `setor_ibfk_1` FOREIGN KEY (`fk_orgao`) REFERENCES `orgao` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -258,7 +258,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!50503 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
   `username` varchar(20) NOT NULL,
@@ -268,7 +268,7 @@ CREATE TABLE `user` (
   `email` varchar(50) DEFAULT NULL,
   `grupo` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
