@@ -81,13 +81,13 @@ CREATE TABLE Protocolo(
 	id INTEGER NOT NULL,
     fk_documento INTEGER NOT NULL,
     fk_setor_origem INTEGER NOT NULL,
-    fk_recebido_por INTEGER NOT NULL,
+    fk_setor_destino INTEGER NOT NULL,
     fk_pagina INTEGER NOT NULL,
     entregue TINYINT NOT NULL,
     data_da_entrega DATE,
     PRIMARY KEY(id),
     FOREIGN KEY(fk_documento) REFERENCES Documento(id),
     FOREIGN KEY(fk_setor_origem) REFERENCES Setor(id),
-    FOREIGN KEY(fk_recebido_por) REFERENCES User(id),
+    FOREIGN KEY(fk_setor_destino) REFERENCES Setor(id),
     FOREIGN KEY(fk_pagina) REFERENCES Pagina(id)
 );

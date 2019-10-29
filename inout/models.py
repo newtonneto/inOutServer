@@ -111,6 +111,13 @@ class Setor(models.Model):
 	def __str__(self):
 		return self.nome
 
+class Lotacao(models.Model):
+	usuario = models.ForeignKey(User, on_delete = models.PROTECT)
+	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
+	cargo = models.CharField(max_length = 20)
+	entrada = models.DateTimeField('Data de entrada na função')
+	saida = models.DateTimeField('Data de saída da função')
+
 class Livro(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	tipos_choices = [
