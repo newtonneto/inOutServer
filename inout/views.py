@@ -77,7 +77,7 @@ def index(request):
 	}
 
 	#Renderiza a página de login com o contexto gerado
-	return render(request, 'inout/index.html', contexto)
+	return render(request, 'index.html', contexto)
 
 	""" Tambem é possivel verificar o login para permitir o acesso as paginas usando a seguinte estrutura:
 	if request.user.is_autheticated:

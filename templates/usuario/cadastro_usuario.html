@@ -1,0 +1,100 @@
+{% load staticfiles %}
+{% include "header.html" %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+        <!-- Page Heading -->
+            <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
+            <div class="col-lg-12 mb-4">
+                <div class="card shadow mb-4">
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <form class="user" action="#" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="text" class="form-control form-control-user" id="first_name" name="first_name" placeholder="Nome" required >
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-user" id="last_name" name="last_name" placeholder="Sobrenome" required />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="text" class="form-control form-control-user" id="username" name="username" placeholder="Nome de Usuário" required >
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email" required />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Senha" required >
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="password" class="form-control form-control-user" id="confirma_password" name="confirma_password" placeholder="Repita sua Senha" required />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <select class="form-control form-control-user-alternative1" id="setor" name="setor" required />
+                                            <option value="1">AJUR</option>
+                                            <option value="2">APOIO AO GABINETE</option>
+                                            <option value="3">ASSCOM</option>
+                                            <option value="4">ASSTEC</option>
+                                            <option value="5">ATENDIMENTO</option>
+                                            <option value="6">DAG</option>
+                                            <option value="7">DASA</option>
+                                            <option value="8">DCRA</option>
+                                            <option value="9">DFUA</option>
+                                            <option value="10">DGSIG</option>
+                                            <option value="11">DLOS</option>
+                                            <option value="12">GABINETE</option>
+                                            <option value="13">INFORMATICA</option>
+                                            <option value="14">OUVIDORIA</option>
+                                            <option value="15">PROTOCOLO</option>
+                                            <option value="16">RH</option>
+                                            <option value="17">SAAG</option>
+                                            <option value="18">SAFL</option>
+                                            <option value="19">SAIPUA</option>
+                                            <option value="20">SANBIO</option>
+                                            <option value="21">SCALA</option>
+                                            <option value="22">SDI</option>
+                                            <option value="23">SGCT</option>
+                                            <option value="24">SGFA</option>
+                                            <option value="25">SGFU</option>
+                                            <option value="26">SJPI</option>
+                                            <option value="27">SLOPR</option>
+                                            <option value="28">SLOPU</option>
+                                            <option value="29">SLS</option>
+                                            <option value="30">SPASO</option>
+                                            <option value="31">SPATS</option>
+                                            <option value="32">SPPUA</option>
+                                            <option value="33">SZL</option>
+                                            <option value="34">SZN</option>
+                                            <option value="35">SZO</option>
+                                            <option value="36">SZS</option>
+                                            <option value="37">USF</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-user" id="cargo" name="cargo" placeholder="Cargo" required />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input class="btn btn-primary btn-user btn-block" type="submit" value="Cadastrar"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- End of Main Content -->
+
+{% include "footer.html" %}

@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('inout.urls')),
+    path('usuario', include('usuario.urls'))
 ]
 
 handler404 = 'inout.views.error_404_view'
