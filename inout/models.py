@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Processo(models.Model):
-	numero = models.CharField(max_length = 30)
+	numero = models.CharField(max_length = 21)
 
 	def __str__(self):
 		return self.numero
@@ -116,13 +116,14 @@ class Lotacao(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
 	cargo_choices = [
 		(1, "Arquiteto"),
-		(1, "Assistente Administrativo"),
-		(1, "Diretor"),
-		(1, "Estagiário"),
-		(1, "Fiscal"),
-		(1, "Recepcionista"),
-		(1, "Secretário"),
-		(1, "Técnico em Informática"),
+		(2, "Assistente Administrativo"),
+		(3, "Chefe de Gabinete"),
+		(4, "Diretor"),
+		(5, "Estagiário"),
+		(6, "Fiscal"),
+		(7, "Recepcionista"),
+		(8, "Secretário"),
+		(9, "Técnico em Informática"),
 	]
 	cargo = models.IntegerField(choices = cargo_choices)
 	entrada = models.DateTimeField('Data de entrada na função')
