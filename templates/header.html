@@ -23,6 +23,14 @@
 </head>
 
 <body id="page-top">
+  {%if messages%}
+    {% for message in messages %}
+      <div class="alert alert-{{message.tags}} text-center" id="success-alert" role="alert">
+        {{message}}
+      </div>
+    {% endfor %}
+  {% endif %}
+
 
   <!-- Page Wrapper -->
   <div id="wrapper">
@@ -142,9 +150,9 @@
             <h6 class="collapse-header">Administração</h6>
             <a class="collapse-item" href="#">Novo Usuário</a>
             <a class="collapse-item" href="#">Listar Usuários</a>
-            <a class="collapse-item" href="#">Novo Setor</a>
+            <a class="collapse-item" href="#">Novo Orgão/Setor</a>
             <a class="collapse-item" href="#">Listar Setores</a>
-            <a class="collapse-item" href="#">Novo Órgão</a>
+            <a class="collapse-item" href="{% url 'inout:novo_orgao' %}">Novo Órgão</a>
             <a class="collapse-item" href="#">Listar Órgãos</a>
           </div>
         </div>

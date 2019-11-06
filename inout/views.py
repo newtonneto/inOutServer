@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
-from .models import Documento, Prazo, Processo
+from .models import Documento, Prazo, Processo, Orgao
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
@@ -247,6 +248,40 @@ def error_404_view(request, exception):
 def error_500_view(request):
     
     return render(request,'inout/500.html')
+
+@login_required
+def novo_orgao(request):
+	contexto = {
+		'titulo': "Cadastrar novo orgão",
+	}
+
+	return render(request, 'inout/novo_orgao.html', contexto)
+
+@login_required
+def salvar_orgao(request):
+
+	nome = request.POST.get("nome", False)
+	sigla = request.POST.get("sigla", False)
+	esfera = request.POST.get("esfera", False)
+	estado = request.POST.get("estado", False)
+	municipio = request.POST.get("municipio", False)
+
+	if nome and sigla and esfera and estado and municipio:
+		orgao = Orgao()
+		orgao.nome = nome
+		orgao.sigla = sigla
+		orgao.esfera = esfera
+		orgao.estado = estado
+		orgao.municipio = municipio
+		orgao.save()
+
+		messages.add_message(request, messages.SUCCESS, "Orgão cadastrado com sucesso")
+		return redirect(reverse('inout:novo_orgao'))
+
+	else:
+		messages.add_message(request, messages.ERROR, "Preencha todos os campos")
+		return redirect(reverse('inout:novo_orgao'))
+
 
 ##### DADOS DOS GRÁFICOS - criar arquivo
 

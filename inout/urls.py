@@ -1,5 +1,5 @@
 from django.urls import path
-from django.conf.urls import url
+from django.conf.urls import url, re_path
 from . import views
 
 app_name = "inout"
@@ -29,6 +29,8 @@ urlpatterns = [
 	path('listar_documentos_do_dia', views.listar_documentos_do_dia, name = 'listar_documentos_do_dia'),
 	path('listar_documentos_da_semana', views.listar_documentos_da_semana, name = 'listar_documentos_da_semana'),
 	path('listar_documentos_do_mes', views.listar_documentos_do_mes, name = 'listar_documentos_do_mes'),
+	re_path(r'^novo_orgao', views.novo_orgao, name = 'novo_orgao'),
+	re_path(r'^salvar_orgao', views.salvar_orgao, name = 'salvar_orgao'),
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
 	url(r'^api/chart/pie/$', views.chart_data_pie.as_view()),
 ]
