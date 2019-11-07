@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Processo(models.Model):
 	numero = models.CharField(max_length = 21)
@@ -104,7 +105,7 @@ class Orgao(models.Model):
 
 class Setor(models.Model):
 	orgao = models.ForeignKey(Orgao, on_delete = models.PROTECT)
-	nome_choices = [
+	""" nome_choices = [
 		(1, 'AJUR'),
 		(2, 'APOIO AO GABINETE'),
 		(3, 'ASSCOM'),
@@ -143,7 +144,8 @@ class Setor(models.Model):
 		(36, 'SZS'),
 		(37, 'USF'),
 	]
-	nome = models.IntegerField(choices = nome_choices)
+	nome = models.IntegerField(choices = nome_choices) """
+	nome = models.CharField(max_length = 50)
 	ativo = models.BooleanField(default = True)
 
 	def __str__(self):
@@ -164,8 +166,8 @@ class Lotacao(models.Model):
 		(9, "Técnico em Informática"),
 	]
 	cargo = models.IntegerField(choices = cargo_choices)
-	entrada = models.DateTimeField('Data de entrada na função')
-	saida = models.DateTimeField('Data de saída da função')
+	entrada = models.DateTimeField('Data de entrada na função', default = timezone.now())
+	saida = models.DateTimeField('Data de saída da função', null = True)
 
 class Livro(models.Model):
 	setor = models.ForeignKey(Setor, on_delete = models.PROTECT)
