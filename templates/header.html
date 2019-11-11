@@ -77,9 +77,9 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Gerencia de Documentos</h6>
             <a class="collapse-item" href="{% url 'inout:cadastrar' %}">Novo</a>
-            <a class="collapse-item" href="#">Editar</a>
+            <!--a class="collapse-item" href="#">Editar</a-->
             <a class="collapse-item" href="{% url 'inout:listardocumentos' %}">Mostrar Todos</a>
-            <a class="collapse-item" href="#">Buscar</a>
+            <a class="collapse-item" href="{% url 'inout:busca_avancada' %}">Buscar</a>
           </div>
         </div>
       </li>
@@ -124,10 +124,10 @@
         <div id="collapseProtocolos" class="collapse" aria-labelledby="headingProtocolos" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Gerencia de Protocolos</h6>
-            <a class="collapse-item" href="#">Novo</a>
-            <a class="collapse-item" href="#">Externos</a>
-            <a class="collapse-item" href="#">Internos</a>
-            <a class="collapse-item" href="#">USF</a>
+            <a class="collapse-item" href="{% url 'inout:novo_protocolo' %}">Novo</a>
+            <a class="collapse-item" href="{% url 'inout:lista_protocolos_externos' %}">Externos</a>
+            <a class="collapse-item" href="{% url 'inout:lista_protocolos_internos' %}">Internos</a>
+            <a class="collapse-item" href="{% url 'inout:lista_protocolos_usf' %}">USF</a>
           </div>
         </div>
       </li>
@@ -148,12 +148,12 @@
         <div id="collapseAdministrativo" class="collapse" aria-labelledby="headingAdministrativo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Administração</h6>
-            <a class="collapse-item" href="#">Novo Usuário</a>
-            <a class="collapse-item" href="#">Listar Usuários</a>
-            <a class="collapse-item" href="#">Novo Orgão/Setor</a>
-            <a class="collapse-item" href="#">Listar Setores</a>
+            <a class="collapse-item" href="{% url 'usuario:cadastro_usuario' %}">Novo Usuário</a>
+            <a class="collapse-item" href="{% url 'usuario:lista_usuarios' %}">Listar Usuários</a>
+            <a class="collapse-item" href="{% url 'inout:novo_setor' %}">Novo Setor</a>
+            <a class="collapse-item" href="{% url 'inout:lista_setores' %}">Listar Setores</a>
             <a class="collapse-item" href="{% url 'inout:novo_orgao' %}">Novo Órgão</a>
-            <a class="collapse-item" href="#">Listar Órgãos</a>
+            <a class="collapse-item" href="{% url 'inout:lista_orgaos' %}">Listar Órgãos</a>
           </div>
         </div>
       </li>

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from inout.models import Lotacao, Orgao, Setor
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def cadastro_usuario(request):
     contexto = {
@@ -29,3 +30,12 @@ def salva_usuario(request):
     lotacao.save()
 
     return render(request, 'registration/login.html')
+
+@login_required
+def lista_usuarios(request):
+
+	context = {
+		'titulo': "Lista de usuários cadastrados",
+	}
+
+	return render(request, 'usuario/lista_usuarios.html', context)

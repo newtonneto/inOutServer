@@ -283,6 +283,81 @@ def salvar_orgao(request):
 		return redirect(reverse('inout:novo_orgao'))
 
 
+##### FALTA IMPLEMENTAR #####
+
+@login_required
+def busca_avancada(request):
+
+	context = {
+		'titulo': "Busca avançada",
+	}
+
+	return render(request, 'inout/busca_avancada.html', context)
+
+@login_required
+def novo_protocolo(request):
+
+	context = {
+		'titulo': "Cadastrar protocolo",
+	}
+
+	return render(request, 'inout/novo_protocolo.html', context)
+
+@login_required
+def lista_protocolos_externos(request):
+
+	context = {
+		'titulo': "Protocolos externos",
+	}
+
+	return render(request, 'inout/lista_protocolos_externos.html', context)
+
+@login_required
+def lista_protocolos_internos(request):
+
+	context = {
+		'titulo': "Protocolos internos",
+	}
+
+	return render(request, 'inout/lista_protocolos_internos.html', context)
+
+@login_required
+def lista_protocolos_usf(request):
+
+	context = {
+		'titulo': "Protocolos USF",
+	}
+
+	return render(request, 'inout/lista_protocolos_usf.html', context)
+
+@login_required
+def novo_setor(request):
+
+	context = {
+		'titulo': "Cadastrar setor",
+	}
+
+	return render(request, 'inout/novo_setor.html', context)
+
+@login_required
+def lista_setores(request):
+
+	context = {
+		'titulo': "Lista de setores por órgão",
+	}
+
+	return render(request, 'inout/lista_setores.html', context)
+
+@login_required
+def lista_orgaos(request):
+
+	context = {
+		'titulo': "Lista de órgãos",
+	}
+
+	return render(request, 'inout/lista_orgaos.html', context)
+
+
 ##### DADOS DOS GRÁFICOS - criar arquivo
 
 

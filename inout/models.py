@@ -105,46 +105,6 @@ class Orgao(models.Model):
 
 class Setor(models.Model):
 	orgao = models.ForeignKey(Orgao, on_delete = models.PROTECT)
-	""" nome_choices = [
-		(1, 'AJUR'),
-		(2, 'APOIO AO GABINETE'),
-		(3, 'ASSCOM'),
-		(4, 'ASSTEC'),
-		(5, 'ATENDIMENTO'),
-		(6, 'DAG'),
-		(7, 'DASA'),
-		(8, 'DCRA'),
-		(9, 'DFUA'),
-		(10, 'DGSIG'),
-		(11, 'DLOS'),
-		(12, 'GABINETE'),
-		(13, 'INFORMATICA'),
-		(14, 'OUVIDORIA'),
-		(15, 'PROTOCOLO'),
-		(16, 'RH'),
-		(17, 'SAAG'),
-		(18, 'SAFL'),
-		(19, 'SAIPUA'),
-		(20, 'SANBIO'),
-		(21, 'SCALA'),
-		(22, 'SDI'),
-		(23, 'SGCT'),
-		(24, 'SGFA'),
-		(25, 'SGFU'),
-		(26, 'SJPI'),
-		(27, 'SLOPR'),
-		(28, 'SLOPU'),
-		(29, 'SLS'),
-		(30, 'SPASO'),
-		(31, 'SPATS'),
-		(32, 'SPPUA'),
-		(33, 'SZL'),
-		(34, 'SZN'),
-		(35, 'SZO'),
-		(36, 'SZS'),
-		(37, 'USF'),
-	]
-	nome = models.IntegerField(choices = nome_choices) """
 	nome = models.CharField(max_length = 50)
 	ativo = models.BooleanField(default = True)
 
@@ -166,7 +126,7 @@ class Lotacao(models.Model):
 		(9, "Técnico em Informática"),
 	]
 	cargo = models.IntegerField(choices = cargo_choices)
-	entrada = models.DateTimeField('Data de entrada na função', default = timezone.now())
+	entrada = models.DateTimeField('Data de entrada na função', auto_now_add = True)
 	saida = models.DateTimeField('Data de saída da função', null = True)
 
 class Livro(models.Model):
