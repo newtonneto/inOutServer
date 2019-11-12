@@ -30,7 +30,7 @@ def valida_login(request):
 		next = request.POST.get('next', False)
 
 		if next:
-			return redirect(reverse("{}{}".format('inout:', next.replace('/', ''))))
+			return redirect(reverse("{}{}".format('inout:', next.replace('/', '').replace('.html', ''))))
 			#return render(request, "{}{}{}".format('inout', next, '.html'))
 		else:
 			return redirect(reverse('inout:index'))
@@ -102,6 +102,9 @@ def salvarcadastro(request):
 		documento = Documento()
 		documento.usuario = request.user
 		documento.data_de_recebimento = datetime.date.today()
+		print(">>>>")
+		print(datetime.date.today())
+		print("<<<<")
 		documento.tipo = int(request.POST['tipo_de_documento'])
 		documento.numero = request.POST['numero_do_documento']
 		documento.emissor = request.POST['orgao_expedidor_do_documento']
@@ -430,13 +433,20 @@ class chart_data_pie(APIView):
 
 
 def prazos_do_dia():
-	lista_de_documentos = Documento.objects.filter(prazo__vencimento = datetime.date.today())
+	lista_de_documentos = Documento.objects.raw('SELECT * FROM inout_documento INNER JOIN inout_prazo ON inout_prazo.documento_id = inout_documento.id WHERE inout_prazo.vencimento = %s', [datetime.date.today()])
+	#lista_de_documentos = Documento.objects.filter(prazo__vencimento = datetime.date.today())
 
 	return lista_de_documentos
 
 #Retorna todos os documentos cadastrados no dia de hoje
 def documentos_do_dia():
-	feitos_hoje = Documento.objects.filter(data_de_recebimento__day = datetime.date.today().day)
+	print("AHSUHAUSHAUHSA")
+	print(datetime.date.today().strftime("%Y-%m-%d"))
+	print("AHSUHAUSHAUHSA")
+	#feitos_hoje = Documento.objects.raw('SELECT * FROM inout_documento WHERE inout_documento.data_de_recebimento = "{}"'.format('2019-11-12'))
+	feitos_hoje = Documento.objects.raw('SELECT * FROM inout_documento WHERE inout_documento.data_de_recebimento = "2019-11-12 00:00:00"')
+	print(len(feitos_hoje))
+	#feitos_hoje = Documento.objects.filter(data_de_recebimento__day = datetime.date.today().day)
 
 	return feitos_hoje
 
