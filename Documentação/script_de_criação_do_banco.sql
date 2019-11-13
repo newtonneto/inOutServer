@@ -68,6 +68,7 @@ CREATE TABLE Lotacao(
     cargo INTEGER NOT NULL,
     entrada DATE NOT NULL,
     saida DATE,
+    PRIMARY KEY(id)
     FOREIGN KEY(fk_user) REFERENCES User(id),
     FOREIGN KEY(fk_setor) REFERENCES Setor(id)
 );

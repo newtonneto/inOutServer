@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
 from .models import Documento, Prazo, Processo, Orgao
+from django.db import connection
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
@@ -100,16 +101,27 @@ def salvarcadastro(request):
 	if request.method == 'POST':
 		#Cada request.POST é responsável por capturar um dado especifico do formulário, esse dado é representado pelo seu name no input do form
 		documento = Documento()
-		documento.usuario = request.user
+		documento.fk_user = request.user
 		documento.data_de_recebimento = datetime.date.today()
-		print(">>>>")
-		print(datetime.date.today())
-		print("<<<<")
 		documento.tipo = int(request.POST['tipo_de_documento'])
 		documento.numero = request.POST['numero_do_documento']
 		documento.emissor = request.POST['orgao_expedidor_do_documento']
 		documento.assunto = request.POST['assunto_do_documento']
 		documento.despacho = request.POST['despacho_do_documento']
+
+		with connection.cursor() as cursor:
+			cursor.execute('INSERT INTO documento (fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho) VALUES (%s, %s, %s, %s, %s, %s, %s)', [
+																																						request.user.id,
+																																						datetime.date.today(),
+																																						int(request.POST['tipo_de_documento']),
+																																						request.POST['numero_do_documento'],
+																																						request.POST['orgao_expedidor_do_documento'],
+																																						request.POST['assunto_do_documento'],
+																																						request.POST['despacho_do_documento'],
+																																					])
+			row = cursor.fetchone()
+			print('???')
+			print(row)
 
 		try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário
@@ -433,19 +445,14 @@ class chart_data_pie(APIView):
 
 
 def prazos_do_dia():
-	lista_de_documentos = Documento.objects.raw('SELECT * FROM inout_documento INNER JOIN inout_prazo ON inout_prazo.documento_id = inout_documento.id WHERE inout_prazo.vencimento = %s', [datetime.date.today()])
+	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN prazo ON prazo.fk_documento = documento.id WHERE prazo.vencimento = %s', [datetime.date.today()])
 	#lista_de_documentos = Documento.objects.filter(prazo__vencimento = datetime.date.today())
 
 	return lista_de_documentos
 
 #Retorna todos os documentos cadastrados no dia de hoje
 def documentos_do_dia():
-	print("AHSUHAUSHAUHSA")
-	print(datetime.date.today().strftime("%Y-%m-%d"))
-	print("AHSUHAUSHAUHSA")
-	#feitos_hoje = Documento.objects.raw('SELECT * FROM inout_documento WHERE inout_documento.data_de_recebimento = "{}"'.format('2019-11-12'))
-	feitos_hoje = Documento.objects.raw('SELECT * FROM inout_documento WHERE inout_documento.data_de_recebimento = "2019-11-12 00:00:00"')
-	print(len(feitos_hoje))
+	feitos_hoje = Documento.objects.raw('SELECT * FROM documento WHERE documento.data_de_recebimento = %s', [datetime.date.today().day])
 	#feitos_hoje = Documento.objects.filter(data_de_recebimento__day = datetime.date.today().day)
 
 	return feitos_hoje
