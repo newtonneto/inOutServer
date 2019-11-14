@@ -119,9 +119,6 @@ def salvarcadastro(request):
 																																						request.POST['assunto_do_documento'],
 																																						request.POST['despacho_do_documento'],
 																																					])
-			row = cursor.fetchone()
-			print('???')
-			print(row)
 
 		try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário
@@ -173,7 +170,8 @@ def editar_documento(request, documento_id):
 #Retorna todos os documentos cadastrados no sistema
 @login_required
 def listardocumentos(request):
-	lista_de_documentos = Documento.objects.order_by('data_de_recebimento')
+	#lista_de_documentos = Documento.objects.order_by('data_de_recebimento')
+	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento ORDER BY data_de_recebimento')
 	contexto = {
 		'titulo': "Todos os documentos",
 		'lista_de_documentos': lista_de_documentos,
@@ -282,13 +280,21 @@ def salvar_orgao(request):
 	municipio = request.POST.get("municipio", False)
 
 	if nome and sigla and esfera and estado and municipio:
-		orgao = Orgao()
+		""" orgao = Orgao()
 		orgao.nome = nome
 		orgao.sigla = sigla
 		orgao.esfera = esfera
 		orgao.estado = estado
 		orgao.municipio = municipio
-		orgao.save()
+		orgao.save() """
+		with connection.cursor() as cursor:
+			cursor.execute('INSERT INTO orgao (nome, sigla, esfera, estado, municipio) VALUES (%s, %s, %s, %s, %s)', [
+																														nome,
+																														sigla,
+																														esfera,
+																														estado,
+																														municipio,
+																													])
 
 		messages.add_message(request, messages.SUCCESS, "Orgão cadastrado com sucesso")
 		return redirect(reverse('inout:novo_orgao'))
