@@ -1,6 +1,5 @@
-{% load staticfiles %}
-{% include "header.html" %}
-
+        {% extends 'base.html' %}
+        {% block content %}
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
@@ -10,15 +9,46 @@
             <div class="card shadow mb-4">
               <div class="col-lg-7">
                 <div class="p-5">
-                  
+                  <form class="user" action="{% url 'inout:salvar_protocolo' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                      <div class="col-sm-6 mb-3 mb-sm-0">
+                        <input type="text" class="form-control form-control-user" name="ano" placeholder="Nome" required />
+                      </div>
+                      <div class="col-sm-6">
+                        <input type="text" class="form-control form-control-user" name="volume" placeholder="Sigla" required />
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-sm-6 mb-3 mb-sm-0">
+                        {% if lista_de_setores %}
+                        <select class="form-control form-control-user-alternative1" name="setor" required >
+                            {% for setor in lista_de_setores %}
+                            <option value="{{ setor.id }}">{{ setor.sigla }} - {{ setor.fk_orgao.sigla }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                      </div>
+                      <div class="col-sm-6">
+                        <select class="form-control form-control-user-alternative1" name="tipo" required >
+                            <option value="1">Externo</option>
+                            <option value="2" selected>Interno</option>
+                            <option value="3">USF</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-sm-6">
+                        <input class="btn btn-primary btn-user btn-block" type="submit" name="Cadastrar"/>
+                      </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-{% include "footer.html" %}
+        {% endblock %}

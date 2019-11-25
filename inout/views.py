@@ -3,10 +3,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.template import loader
-from .models import Documento, Prazo, Processo, Orgao
+from .models import Documento, Prazo, Processo, Orgao, Setor
 from django.db import connection
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -100,27 +100,27 @@ def cadastrar(request):
 def salvarcadastro(request):
 	if request.method == 'POST':
 		#Cada request.POST é responsável por capturar um dado especifico do formulário, esse dado é representado pelo seu name no input do form
-		documento = Documento()
+		""" documento = Documento()
 		documento.fk_user = request.user
 		documento.data_de_recebimento = datetime.date.today()
 		documento.tipo = int(request.POST['tipo_de_documento'])
 		documento.numero = request.POST['numero_do_documento']
 		documento.emissor = request.POST['orgao_expedidor_do_documento']
 		documento.assunto = request.POST['assunto_do_documento']
-		documento.despacho = request.POST['despacho_do_documento']
+		documento.despacho = request.POST['despacho_do_documento'] """
 
 		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO documento (fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho) VALUES (%s, %s, %s, %s, %s, %s, %s)', [
-																																						request.user.id,
-																																						datetime.date.today(),
-																																						int(request.POST['tipo_de_documento']),
-																																						request.POST['numero_do_documento'],
-																																						request.POST['orgao_expedidor_do_documento'],
-																																						request.POST['assunto_do_documento'],
-																																						request.POST['despacho_do_documento'],
-																																					])
-
-		try:
+			cursor.execute('INSERT INTO documento (fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho, entrega_pessoal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', [
+																																															request.user.id,
+																																															datetime.date.today(),
+																																															int(request.POST['tipo_de_documento']),
+																																															request.POST['numero_do_documento'],
+																																															request.POST['orgao_expedidor_do_documento'],
+																																															request.POST['assunto_do_documento'],
+																																															request.POST['despacho_do_documento'],
+																																															request.POST.get('entrega_pessoal', False)
+																																														])
+		""" try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário
 			processo = Processo.objects.get(numero = request.POST['numero_do_processo'])
 			#Caso seja, o documento é associado ao processo
@@ -130,12 +130,12 @@ def salvarcadastro(request):
 			novo_processo = Processo()
 			novo_processo.numero = request.POST['numero_do_processo']
 			novo_processo.save()
-			documento.processo = novo_processo
+			documento.processo = novo_processo """
 
 		#Salva o novo documento
-		documento.save()
+		#documento.save()
 
-		if (request.POST['prazo_01'] != ''):
+		""" if (request.POST['prazo_01'] != ''):
 			tipo_01 = request.POST['tipo_01']
 			prazo_01 = request.POST['prazo_01']
 			documento.prazo_set.create(tipo = tipo_01, vencimento = prazo_01)
@@ -152,14 +152,18 @@ def salvarcadastro(request):
 			prazo_03 = request.POST['prazo_03']
 			documento.prazo_set.create(tipo = tipo_03, vencimento = prazo_03)
 		except:
-			print("Prazo 03 não utilizado")
+			print("Prazo 03 não utilizado") """
 
 		#return HttpResponseRedirect(reverse('inout:index'))
 		return redirect(reverse('inout:cadastrar'))
 
 #Retorna um formulario preenchido com as informações de um documento já cadastrado
 def editar_documento(request, documento_id):
-	documento = get_object_or_404(Documento, pk = documento_id)
+	try:
+		documento = Documento.objects.raw('SELECT * FROM documento WHERE id = %s', [documento_id])[0]
+	except Documento.DoesNotExist:
+		return redirect(reverse('inout:error_404_view'))
+
 	contexto = {
 		'titulo': "Editar " + documento.tipo_do_documento() + " " + documento.numero,
 		'documento': documento,
@@ -254,14 +258,6 @@ def alterar_status_prazo(request, documento_id, prazo_id):
 
 	return redirect(reverse('inout:detalhesdocumento', args=[documento.id]))
 
-def error_404_view(request, exception):
-    
-    return render(request,'inout/404.html')
-
-def error_500_view(request):
-    
-    return render(request,'inout/500.html')
-
 @login_required
 def novo_orgao(request):
 	contexto = {
@@ -272,7 +268,6 @@ def novo_orgao(request):
 
 @login_required
 def salvar_orgao(request):
-
 	nome = request.POST.get("nome", False)
 	sigla = request.POST.get("sigla", False)
 	esfera = request.POST.get("esfera", False)
@@ -288,13 +283,13 @@ def salvar_orgao(request):
 		orgao.municipio = municipio
 		orgao.save() """
 		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO orgao (nome, sigla, esfera, estado, municipio) VALUES (%s, %s, %s, %s, %s)', [
-																														nome,
-																														sigla,
-																														esfera,
-																														estado,
-																														municipio,
-																													])
+			cursor.execute('INSERT INTO orgao (nome, sigla, esfera, estado, municipio, ativo) VALUES (%s, %s, %s, %s, %s, true)', [
+																																	nome,
+																																	sigla,
+																																	esfera,
+																																	estado,
+																																	municipio,
+																																])
 
 		messages.add_message(request, messages.SUCCESS, "Orgão cadastrado com sucesso")
 		return redirect(reverse('inout:novo_orgao'))
@@ -303,6 +298,59 @@ def salvar_orgao(request):
 		messages.add_message(request, messages.ERROR, "Preencha todos os campos")
 		return redirect(reverse('inout:novo_orgao'))
 
+@login_required
+def novo_setor(request):
+	lista_de_orgaos = Orgao.objects.raw('SELECT * FROM orgao')
+
+	context = {
+		'titulo': "Cadastrar setor",
+		'lista_de_orgaos': lista_de_orgaos,
+	}
+
+	return render(request, 'inout/novo_setor.html', context)
+
+@login_required
+def salvar_setor(request):
+	nome = request.POST.get("nome", False)
+	sigla = request.POST.get("sigla", False)
+	orgao = request.POST.get("orgao", False)
+
+	if nome and sigla and orgao:
+		with connection.cursor() as cursor:
+			cursor.execute('INSERT INTO setor (fk_orgao, nome, sigla, ativo) VALUES (%s, %s, %s, true)', [
+																											orgao,
+																											nome,
+																											sigla,
+																										])
+		messages.add_message(request, messages.SUCCESS, "Setor cadastrado com sucesso")
+		return redirect(reverse('inout:novo_setor'))
+
+	else:
+		messages.add_message(request, messages.ERROR, "Preencha todos os campos")
+		return redirect(reverse('inout:novo_setor'))
+
+@login_required
+def novo_protocolo(request):
+	lista_de_setores = Setor.objects.raw('SELECT * FROM setor INNER JOIN orgao ON setor.fk_orgao = orgao.id ORDER BY orgao.sigla')
+
+	context = {
+		'titulo': "Cadastrar protocolo",
+		'lista_de_setores': lista_de_setores,
+	}
+
+	return render(request, 'inout/novo_protocolo.html', context)
+
+@login_required
+def salvar_protocolo(request):
+	pass
+
+def error_404_view(request, exception):
+    
+    return render(request,'inout/404.html')
+
+def error_500_view(request):
+    
+    return render(request,'inout/500.html')
 
 ##### FALTA IMPLEMENTAR #####
 
@@ -314,15 +362,6 @@ def busca_avancada(request):
 	}
 
 	return render(request, 'inout/busca_avancada.html', context)
-
-@login_required
-def novo_protocolo(request):
-
-	context = {
-		'titulo': "Cadastrar protocolo",
-	}
-
-	return render(request, 'inout/novo_protocolo.html', context)
 
 @login_required
 def lista_protocolos_externos(request):
@@ -350,15 +389,6 @@ def lista_protocolos_usf(request):
 	}
 
 	return render(request, 'inout/lista_protocolos_usf.html', context)
-
-@login_required
-def novo_setor(request):
-
-	context = {
-		'titulo': "Cadastrar setor",
-	}
-
-	return render(request, 'inout/novo_setor.html', context)
 
 @login_required
 def lista_setores(request):

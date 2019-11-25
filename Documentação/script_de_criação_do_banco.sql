@@ -1,5 +1,5 @@
 CREATE TABLE User(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     username VARCHAR(20) NOT NULL,
     password VARCHAR(32) NOT NULL,
     first_name VARCHAR(15),
@@ -10,13 +10,13 @@ CREATE TABLE User(
 );
 
 CREATE TABLE Processo(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     numero VARCHAR(21) NOT NULL,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE Documento(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_user INTEGER NOT NULL,
     fk_processo INTEGER,
 	data_de_recebimento DATE NOT NULL,
@@ -32,10 +32,10 @@ CREATE TABLE Documento(
 );
 
 CREATE TABLE Prazo(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_documento INTEGER NOT NULL,
     tipo INTEGER NOT NULL,
-    vencimento DATETIME NOT NULL,
+    vencimento DATE NOT NULL,
     encerrado TINYINT NOT NULL DEFAULT false,
     dilacao TINYINT NOT NULL DEFAULT false,
     quantidade_de_dilacoes INTEGER DEFAULT 0,
@@ -44,37 +44,40 @@ CREATE TABLE Prazo(
 );
 
 CREATE TABLE Orgao(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
 	nome VARCHAR(50) NOT NULL,
 	sigla VARCHAR(10) NOT NULL,
 	esfera INTEGER NOT NULL,
+    estado INTEGER NOT NULL DEFAULT 20,
 	municipio VARCHAR(32) NOT NULL,
+    ativo TINYINT NOT NULL DEFAULT true,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE Setor(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_orgao INTEGER NOT NULL,
-    nome INTEGER NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    sigla VARCHAR(10) NOT NULL,
     ativo TINYINT NOT NULL DEFAULT true,
     PRIMARY KEY(id),
     FOREIGN KEY(fk_orgao) REFERENCES Orgao(id)
 );
 
 CREATE TABLE Lotacao(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_user INTEGER NOT NULL,
     fk_setor INTEGER NOT NULL,
     cargo INTEGER NOT NULL,
     entrada DATE NOT NULL,
     saida DATE,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
     FOREIGN KEY(fk_user) REFERENCES User(id),
     FOREIGN KEY(fk_setor) REFERENCES Setor(id)
 );
 
 CREATE TABLE Livro(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_setor INTEGER NOT NULL,
     tipo INTEGER NOT NULL DEFAULT 2,
     ano INTEGER NOT NULL,
@@ -85,7 +88,7 @@ CREATE TABLE Livro(
 );
 
 CREATE TABLE Pagina(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_livro INTEGER NOT NULL,
     numero INTEGER NOT NULL,
     PRIMARY KEY(id),
@@ -93,7 +96,7 @@ CREATE TABLE Pagina(
 );
 
 CREATE TABLE Protocolo(
-	id INTEGER NOT NULL,
+	id INTEGER NOT NULL AUTO_INCREMENT,
     fk_documento INTEGER NOT NULL,
     fk_setor_origem INTEGER NOT NULL,
     fk_setor_destino INTEGER NOT NULL,
