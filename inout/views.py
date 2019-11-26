@@ -342,7 +342,25 @@ def novo_protocolo(request):
 
 @login_required
 def salvar_protocolo(request):
-	pass
+	ano = request.POST.get("ano", False)
+	volume = request.POST.get("volume", False)
+	setor = request.POST.get("setor", False)
+	tipo = request.POST.get("tipo", False)
+
+	if ano and volume and setor and tipo:
+		with connection.cursor() as cursor:
+			cursor.execute('INSERT INTO livro (fk_setor, tipo, ano, volume, encerrado) VALUES (%s, %s, %s, %s, false)', [
+																															setor,
+																															tipo,
+																															ano,
+																															volume,
+																														])
+		messages.add_message(request, messages.SUCCESS, "Protocolo cadastrado com sucesso")
+		return redirect(reverse('inout:novo_protocolo'))
+
+	else:
+		messages.add_message(request, messages.ERROR, "Preencha todos os campos")
+		return redirect(reverse('inout:novo_protocolo'))
 
 def error_404_view(request, exception):
     
