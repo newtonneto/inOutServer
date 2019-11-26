@@ -10,7 +10,7 @@
           <div class="col-lg-7">
             <div class="p-5">
               {% if documento %}
-              <form class="user" action="{% url 'inout:salvarcadastro' %}" method="POST">
+              <form class="user" action="{% url 'inout:salvar_edicao_documento' documento.id %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">

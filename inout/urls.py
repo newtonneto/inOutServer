@@ -17,6 +17,7 @@ urlpatterns = [
 	path('cadastrar.html', views.cadastrar, name = 'cadastrar'),
 	path('salvarcadastro', views.salvarcadastro, name = 'salvarcadastro'),
 	path('<int:documento_id>/editar_documento', views.editar_documento, name = 'editar_documento'),
+	path('<int:documento_id>/salvar_edicao_documento', views.salvar_edicao_documento, name = 'salvar_edicao_documento'),
 	path('listardocumentos', views.listardocumentos, name = 'listardocumentos'),
 	path('listardocumentos.html', views.listardocumentos, name = 'listardocumentos'),
 	path('<int:documento_id>/detalhesdocumento', views.detalhesdocumento, name = 'detalhesdocumento'),

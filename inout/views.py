@@ -111,14 +111,14 @@ def salvarcadastro(request):
 
 		with connection.cursor() as cursor:
 			cursor.execute('INSERT INTO documento (fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho, entrega_pessoal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', [
-																																															request.user.id,
-																																															datetime.date.today(),
-																																															int(request.POST['tipo_de_documento']),
-																																															request.POST['numero_do_documento'],
-																																															request.POST['orgao_expedidor_do_documento'],
-																																															request.POST['assunto_do_documento'],
-																																															request.POST['despacho_do_documento'],
-																																															request.POST.get('entrega_pessoal', False)
+																																														request.user.id,
+																																														datetime.date.today(),
+																																														int(request.POST['tipo_de_documento']),
+																																														request.POST['numero_do_documento'],
+																																														request.POST['orgao_expedidor_do_documento'],
+																																														request.POST['assunto_do_documento'],
+																																														request.POST['despacho_do_documento'],
+																																														request.POST.get('entrega_pessoal', False)
 																																														])
 		""" try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário
@@ -170,6 +170,19 @@ def editar_documento(request, documento_id):
 	}
 
 	return render(request, 'inout/editar.html', contexto)
+
+def salvar_edicao_documento(request, documento_id):
+	if request.method == "POST":
+		with connection.cursor() as cursor:
+			cursor.execute('UPDATE documento SET tipo = %s, numero = %s, emissor = %s, assunto = %s, despacho = %s WHERE id = %s', [
+																																	int(request.POST['tipo_de_documento']),
+																																	request.POST['numero_do_documento'],
+																																	request.POST['orgao_expedidor_do_documento'],
+																																	request.POST['assunto_do_documento'],
+																																	request.POST['despacho_do_documento'],
+																																	documento_id,
+																																])
+		return redirect(reverse('inout:listardocumentos'))
 
 #Retorna todos os documentos cadastrados no sistema
 @login_required
@@ -506,7 +519,7 @@ def prazos_do_dia():
 
 #Retorna todos os documentos cadastrados no dia de hoje
 def documentos_do_dia():
-	feitos_hoje = Documento.objects.raw('SELECT * FROM documento WHERE documento.data_de_recebimento = %s', [datetime.date.today().day])
+	feitos_hoje = Documento.objects.raw('SELECT * FROM documento WHERE documento.data_de_recebimento = %s', [datetime.date.today()])
 	#feitos_hoje = Documento.objects.filter(data_de_recebimento__day = datetime.date.today().day)
 
 	return feitos_hoje
