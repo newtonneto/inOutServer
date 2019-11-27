@@ -169,9 +169,9 @@ def salvarcadastro(request):
 			documento.prazo_set.create(tipo = tipo_03, vencimento = prazo_03)
 		except:
 			print("Prazo 03 não utilizado") """
-
+		indice = 1
+		
 		while True:
-			indice = 1
 			tipo = "{}{}".format("tipo_", indice)
 			data = "{}{}".format("prazo_", indice)
 			prazo_tipo = request.POST.get(tipo, False)
@@ -265,7 +265,12 @@ def listar_documentos_do_mes(request):
 
 @login_required
 def detalhesdocumento(request, documento_id):
-	documento = get_object_or_404(Documento, pk = documento_id)
+	""" documento = get_object_or_404(Documento, pk = documento_id) """
+	try:
+		documento = Documento.objects.raw('SELECT * FROM documento WHERE id = %s', [documento_id])[0]
+	except Documento.DoesNotExist:
+		return redirect(reverse('inout:error_404_view'))
+		
 	contexto = {
 		'documento': documento,
 		'data_de_hoje': datetime.date.today(),
@@ -296,14 +301,16 @@ def listarprazosdodia(request):
 
 @login_required
 def alterar_status_prazo(request, documento_id, prazo_id):
-	documento = get_object_or_404(Documento, pk = documento_id)
+	""" documento = get_object_or_404(Documento, pk = documento_id)
 	prazo = documento.prazo_set.get(pk = prazo_id)
 
 	if (prazo.encerrado == False):
 		prazo.encerrado = True
-		prazo.save()
+		prazo.save() """
+	with connection.cursor() as cursor:
+		cursor.execute('UPDATE prazo SET encerrado = true WHERE id = %s', [prazo_id])
 
-	return redirect(reverse('inout:detalhesdocumento', args=[documento.id]))
+	return redirect(reverse('inout:detalhesdocumento', args=[documento_id]))
 
 @login_required
 def novo_orgao(request):
