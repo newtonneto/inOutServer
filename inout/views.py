@@ -120,6 +120,9 @@ def salvarcadastro(request):
 																																														request.POST['despacho_do_documento'],
 																																														request.POST.get('entrega_pessoal', False)
 																																														])
+			cursor.execute('SELECT MAX(id) FROM documento')
+			documento_id = cursor.fetchone()[0]
+
 		""" try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário
 			processo = Processo.objects.get(numero = request.POST['numero_do_processo'])
@@ -131,6 +134,19 @@ def salvarcadastro(request):
 			novo_processo.numero = request.POST['numero_do_processo']
 			novo_processo.save()
 			documento.processo = novo_processo """
+
+		processo = request.POST.get('numero_do_processo', False)
+		if processo:
+			objeto_processo = Processo.objects.raw('SELECT * FROM processo WHERE numero = %s', [processo])
+			if objeto_processo:
+				with connection.cursor() as cursor:
+					cursor.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo[0].id, documento_id])
+			else:
+				with connection.cursor() as cursor:
+					cursor.execute('INSERT INTO processo (numero) VALUES (%s)', [processo])
+					cursor.execute('SELECT MAX(id) FROM processo')
+					objeto_processo_id = cursor.fetchone()[0]
+					cursor.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo_id, documento_id])
 
 		#Salva o novo documento
 		#documento.save()
@@ -154,6 +170,24 @@ def salvarcadastro(request):
 		except:
 			print("Prazo 03 não utilizado") """
 
+		while True:
+			indice = 1
+			tipo = "{}{}".format("tipo_", indice)
+			data = "{}{}".format("prazo_", indice)
+			prazo_tipo = request.POST.get(tipo, False)
+			prazo_data = request.POST.get(data, False)
+
+			if prazo_tipo and prazo_data:
+				with connection.cursor() as cursor:
+					cursor.execute('INSERT INTO prazo (fk_documento, tipo, vencimento, encerrado, dilacao) VALUES (%s, %s, %s, false, false)', [
+																												documento_id,
+																												prazo_tipo,
+																												prazo_data,
+																												])
+			else:
+				break
+			indice += 1
+
 		#return HttpResponseRedirect(reverse('inout:index'))
 		return redirect(reverse('inout:cadastrar'))
 
@@ -163,7 +197,7 @@ def editar_documento(request, documento_id):
 		documento = Documento.objects.raw('SELECT * FROM documento WHERE id = %s', [documento_id])[0]
 	except Documento.DoesNotExist:
 		return redirect(reverse('inout:error_404_view'))
-
+	
 	contexto = {
 		'titulo': "Editar " + documento.tipo_do_documento() + " " + documento.numero,
 		'documento': documento,

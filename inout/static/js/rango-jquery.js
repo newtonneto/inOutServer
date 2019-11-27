@@ -9,7 +9,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		if(x < max_fields){ //max input box allowed
 			x++; //text box increment
-			$(wrapper).append('<div><div class="form-group row"><div class="col-sm-6 mb-3 mb-sm-0"><input type="text" class="form-control form-control-user" id="tipo_0' + i + '" name="tipo_0' + i + '" placeholder="Tipo" /></div><div class="col-sm-6"><input type="date" class="form-control form-control-user" id="prazo_0' + i + '" name="prazo_0' + i + '" placeholder="Data" /></div></div><a href="#" class="remove_field">X</a></div>'); //add input box
+			$(wrapper).append('<div><div class="form-group row"><div class="col-sm-6 mb-3 mb-sm-0"><input type="text" class="form-control form-control-user" id="tipo_' + i + '" name="tipo_' + i + '" placeholder="Tipo" /></div><div class="col-sm-6"><input type="date" class="form-control form-control-user" id="prazo_' + i + '" name="prazo_' + i + '" placeholder="Data" /></div></div><a href="#" class="remove_field">X</a></div>'); //add input box
 			i++;
 		}
 	});
