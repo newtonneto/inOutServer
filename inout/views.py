@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.template import loader
-from .models import Documento, Prazo, Processo, Orgao, Setor, Livro, Pagina, Lotacao
+from .models import Documento, Prazo, Processo, Orgao, Setor, Livro, Pagina, Protocolo, Lotacao
 from django.db import connection
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -223,6 +223,7 @@ def salvar_edicao_documento(request, documento_id):
 def listardocumentos(request):
 	#lista_de_documentos = Documento.objects.order_by('data_de_recebimento')
 	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento ORDER BY data_de_recebimento')
+
 	contexto = {
 		'titulo': "Todos os documentos",
 		'lista_de_documentos': lista_de_documentos,
@@ -270,9 +271,12 @@ def detalhesdocumento(request, documento_id):
 		documento = Documento.objects.raw('SELECT * FROM documento WHERE id = %s', [documento_id])[0]
 	except Documento.DoesNotExist:
 		return redirect(reverse('inout:error_404_view'))
+
+	protocolo_documento = Protocolo.objects.raw('SELECT * FROM protocolo WHERE fk_documento = %s', [documento_id])
 		
 	contexto = {
 		'documento': documento,
+		'protocolo_documento': protocolo_documento[0],
 		'data_de_hoje': datetime.date.today(),
 	}
 
