@@ -1,24 +1,43 @@
-{% load staticfiles %}
-{% include "header.html" %}
-
+        {% extends 'base.html' %}
+        {% block content %}
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
-          <div class="col-lg-12 mb-4">
-            <div class="card shadow mb-4">
-              <div class="col-lg-7">
-                <div class="p-5">
-                  
-                </div>
+          <h1 class="h3 mb-2 text-gray-800">{{ titulo }}</h1>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Resultados</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Sigla</th>
+                      <th>Nome</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th>Sigla</th>
+                      <th>Nome</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for orgao in lista_de_orgaos %}
+                      <tr>
+                        <td>{{ orgao.sigla }}</td>
+                        <td>{{ orgao.nome }}</a></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
         <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-{% include "footer.html" %}
+        {% endblock %}
