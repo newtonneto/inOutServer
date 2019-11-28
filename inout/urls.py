@@ -34,8 +34,10 @@ urlpatterns = [
 	path('listar_documentos_do_mes', views.listar_documentos_do_mes, name = 'listar_documentos_do_mes'),
 	re_path(r'^novo_orgao', views.novo_orgao, name = 'novo_orgao'),
 	re_path(r'^salvar_orgao', views.salvar_orgao, name = 'salvar_orgao'),
+	re_path(r'^lista_orgaos', views.lista_orgaos , name = "lista_orgaos"),
 	re_path(r'^novo_setor', views.novo_setor , name = "novo_setor"),
 	re_path(r'^salvar_setor', views.salvar_setor , name = "salvar_setor"),
+	re_path(r'^lista_setores', views.lista_setores , name = "lista_setores"),
 	re_path(r'^novo_protocolo', views.novo_protocolo , name = "novo_protocolo"),
 	re_path(r'^salvar_protocolo', views.salvar_protocolo , name = "salvar_protocolo"),
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
@@ -45,6 +47,4 @@ urlpatterns = [
 	re_path(r'^lista_protocolos_externos', views.lista_protocolos_externos , name = "lista_protocolos_externos"),
 	re_path(r'^lista_protocolos_internos', views.lista_protocolos_internos , name = "lista_protocolos_internos"),
 	re_path(r'^lista_protocolos_usf', views.lista_protocolos_usf , name = "lista_protocolos_usf"),
-	re_path(r'^lista_setores', views.lista_setores , name = "lista_setores"),
-	re_path(r'^lista_orgaos', views.lista_orgaos , name = "lista_orgaos"),
 ]

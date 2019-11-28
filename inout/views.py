@@ -357,6 +357,17 @@ def salvar_orgao(request):
 		return redirect(reverse('inout:novo_orgao'))
 
 @login_required
+def lista_orgaos(request):
+	lista_de_orgaos = Orgao.objects.raw('SELECT * FROM orgao')
+
+	context = {
+		'titulo': "Lista de órgãos",
+		'lista_de_orgaos': lista_de_orgaos,
+	}
+
+	return render(request, 'inout/lista_orgaos.html', context)
+
+@login_required
 def novo_setor(request):
 	lista_de_orgaos = Orgao.objects.raw('SELECT * FROM orgao')
 
@@ -386,6 +397,17 @@ def salvar_setor(request):
 	else:
 		messages.add_message(request, messages.ERROR, "Preencha todos os campos")
 		return redirect(reverse('inout:novo_setor'))
+
+@login_required
+def lista_setores(request):
+	lista_de_setores = Setor.objects.raw('SELECT * FROM setor INNER JOIN orgao ON setor.fk_orgao = orgao.id ORDER BY orgao.sigla')
+
+	context = {
+		'titulo': "Lista de setores por órgão",
+		'lista_de_setores': lista_de_setores,
+	}
+
+	return render(request, 'inout/lista_setores.html', context)
 
 @login_required
 def novo_protocolo(request):
@@ -505,24 +527,6 @@ def lista_protocolos_usf(request):
 	}
 
 	return render(request, 'inout/lista_protocolos_usf.html', context)
-
-@login_required
-def lista_setores(request):
-
-	context = {
-		'titulo': "Lista de setores por órgão",
-	}
-
-	return render(request, 'inout/lista_setores.html', context)
-
-@login_required
-def lista_orgaos(request):
-
-	context = {
-		'titulo': "Lista de órgãos",
-	}
-
-	return render(request, 'inout/lista_orgaos.html', context)
 
 
 ##### DADOS DOS GRÁFICOS - criar arquivo
