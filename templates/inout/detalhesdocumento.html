@@ -103,9 +103,16 @@
           {% if protocolo_documento.entregue == False %}
           <div class="form-group row">
             <div class="col-sm-6">
-              <input class="btn btn-primary btn-user btn-block" type="submit" value="Entregue" />
+                <a id="removeStyleLink" href="{% url 'inout:documento_entregue' protocolo_documento.id %}" class="bg-danger card text-white shadow centralizaTexto" >Entregue</a>
+              <!--input class="btn btn-primary btn-user btn-block" type="submit" value="Entregue" /-->
             </div>
           </div>
+          {% else %}
+          <div class="form-group row">
+              <div class="col-sm-6">
+                  <label>Data de Entrega: </label> {{ protocolo_documento.data_da_entrega }}
+              </div>
+            </div>
           {% endif %}
         </div>
       </div>

@@ -20,6 +20,7 @@ urlpatterns = [
 	path('<int:documento_id>/salvar_edicao_documento', views.salvar_edicao_documento, name = 'salvar_edicao_documento'),
 	re_path(r'^protocolar_documento', views.protocolar_documento, name = "protocolar_documento"),
 	re_path(r'^salvar_protocolo_documento', views.salvar_protocolo_documento, name = "salvar_protocolo_documento"),
+	path('<int:protocolo_documento_id>/documento_entregue', views.documento_entregue, name = "documento_entregue"),
 	path('listardocumentos', views.listardocumentos, name = 'listardocumentos'),
 	path('listardocumentos.html', views.listardocumentos, name = 'listardocumentos'),
 	path('<int:documento_id>/detalhesdocumento', views.detalhesdocumento, name = 'detalhesdocumento'),

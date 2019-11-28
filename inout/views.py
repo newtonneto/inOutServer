@@ -273,14 +273,28 @@ def detalhesdocumento(request, documento_id):
 		return redirect(reverse('inout:error_404_view'))
 
 	protocolo_documento = Protocolo.objects.raw('SELECT * FROM protocolo WHERE fk_documento = %s', [documento_id])
-		
-	contexto = {
-		'documento': documento,
-		'protocolo_documento': protocolo_documento[0],
-		'data_de_hoje': datetime.date.today(),
-	}
+
+	if protocolo_documento:
+		contexto = {
+			'documento': documento,
+			'protocolo_documento': protocolo_documento[0],
+			'data_de_hoje': datetime.date.today(),
+		}
+	
+	else:
+		contexto = {
+			'documento': documento,
+			'data_de_hoje': datetime.date.today(),
+		}
 
 	return render(request, 'inout/detalhesdocumento.html', contexto)
+
+@login_required
+def documento_entregue(request, protocolo_documento_id):
+	with connection.cursor() as cursor:
+		cursor.execute('UPDATE protocolo SET entregue = true, data_da_entrega = %s WHERE id = %s', [datetime.date.today(), protocolo_documento_id])
+	
+	return redirect(reverse('inout:listardocumentos'))
 
 @login_required
 def listarprazos(request):
@@ -464,9 +478,11 @@ def salvar_protocolo_documento(request):
 	lotacao_do_usuario_logado = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
 	numero_pagina = request.POST.get("pagina", False)
 	pagina = Pagina.objects.raw('SELECT * FROM pagina WHERE numero = %s AND fk_livro = %s', [numero_pagina, request.POST.get("livro", False)])
-	pagina_id = pagina[0].id
+	
+	if pagina:
+		pagina_id = pagina[0].id
 
-	if not pagina_id:
+	else:
 		with connection.cursor() as cursor:
 			cursor.execute('INSERT INTO pagina (fk_livro, numero) VALUES (%s, %s)', [request.POST.get("livro", False), numero_pagina])
 			cursor.execute('SELECT MAX(id) FROM pagina')
