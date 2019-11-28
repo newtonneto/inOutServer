@@ -45,7 +45,13 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" name="setor" placeholder="Setor" required />
+                                        {% if lista_de_setores %}
+                                        <select class="form-control form-control-user-alternative1" name="setor" required >
+                                            {% for setor in lista_de_setores %}
+                                                <option value="{{ setor.id }}">{{ setor.sigla }} - {{ setor.fk_orgao.sigla }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="form-group row">

@@ -58,7 +58,13 @@ class Livro(models.Model):
     encerrado = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return "Protocolo {} {} Volume {}".format(self.tipo, self.ano, self.volume)
+        return "Protocolo {} {} Volume {}".format(self.tipos_choices[self.tipo][1], self.ano, self.volume)
+
+    def nome_do_livro(self):
+        return "{} {} Volume {}".format(self.tipos_choices[self.tipo][1], self.ano, self.volume)
+
+    def tipo_do_livro(self):
+        return self.tipos_choices[self.tipo][1]
 
     class Meta:
         db_table = 'livro'
@@ -138,10 +144,10 @@ class Orgao(models.Model):
 class Pagina(models.Model):
     fk_livro = models.ForeignKey(Livro, models.DO_NOTHING, db_column='fk_livro')
     numero = models.IntegerField()
-
+    
     def __str__(self):
         return self.numero
-
+    
     class Meta:
         db_table = 'pagina'
 
@@ -178,6 +184,9 @@ class Protocolo(models.Model):
     fk_pagina = models.ForeignKey(Pagina, models.DO_NOTHING, db_column='fk_pagina')
     entregue = models.IntegerField()
     data_da_entrega = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return "fuck"
 
     class Meta:
         db_table = 'protocolo'

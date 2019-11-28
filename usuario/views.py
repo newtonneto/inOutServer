@@ -1,13 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from inout.models import Lotacao, Orgao, Setor
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from datetime import timedelta
+from django.db import connection
+import datetime
 # Create your views here.
 def cadastro_usuario(request):
+    lista_de_setores = Setor.objects.raw('SELECT * FROM setor')
+
     contexto = {
 		'titulo': "Cadastrar novo usuário",
         'select': Lotacao(),
         'lista_de_orgaos': Orgao.objects.all(),
+        'lista_de_setores': lista_de_setores,
 	}
 
     return render(request, 'usuario/cadastro_usuario.html', contexto)
@@ -18,7 +25,7 @@ def salva_usuario(request):
     user.last_name = request.POST.get('last_name', False)
     user.save()
 
-    setor = Setor()
+    """ setor = Setor()
     setor.orgao = Orgao.objects.get(pk = request.POST.get('orgao', False))
     setor.nome = request.POST.get('setor', False)
     setor.save()
@@ -27,7 +34,26 @@ def salva_usuario(request):
     lotacao.cargo = request.POST.get('cargo', False)
     lotacao.usuario = user
     lotacao.setor = setor
-    lotacao.save()
+    lotacao.save() """
+
+    setor = Setor.objects.raw('SELECT * FROM setor WHERE id = %s', [request.POST.get('setor', False)])
+    cargo = request.POST.get('cargo', False)
+
+    if setor and cargo:
+        with connection.cursor() as cursor:
+            cursor.execute('INSERT INTO lotacao (fk_user, fk_setor, cargo, entrada) VALUES (%s, %s, %s, %s)', [
+                                                                                                                user.id,
+                                                                                                                request.POST.get('setor', False),
+                                                                                                                cargo,
+                                                                                                                datetime.date.today(),
+                                                                                                                ])
+    
+    else:
+        messages.add_message(request, messages.ERROR, "Preencha todos os campos")
+
+        return redirect(reverse('registration:cadastro_usuario'))
+
+    messages.add_message(request, messages.SUCCESS, "Usuário cadastrado com sucesso")
 
     return render(request, 'registration/login.html')
 

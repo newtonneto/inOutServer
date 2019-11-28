@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.template import loader
-from .models import Documento, Prazo, Processo, Orgao, Setor
+from .models import Documento, Prazo, Processo, Orgao, Setor, Livro, Pagina, Lotacao
 from django.db import connection
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -415,6 +415,46 @@ def salvar_protocolo(request):
 	else:
 		messages.add_message(request, messages.ERROR, "Preencha todos os campos")
 		return redirect(reverse('inout:novo_protocolo'))
+
+@login_required
+def protocolar_documento(request):
+	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE documento.id NOT IN (SELECT DISTINCT fk_documento FROM protocolo)')
+	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE NOT EXISTS (SELECT DISTINCT fk_documento FROM protocolo WHERE protocolo.fk_documento = documento.id)')
+	documentos_disponiveis = Documento.objects.raw('SELECT doc.* FROM documento doc LEFT OUTER JOIN protocolo prot ON doc.id = prot.fk_documento WHERE prot.fk_documento IS null')
+	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro')
+	lotacao_do_usuario_logado = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	lista_de_setores = Setor.objects.raw('SELECT * FROM setor WHERE fk_orgao = %s', [lotacao_do_usuario_logado[0].fk_setor.fk_orgao.id])
+
+	context = {
+		'documentos_disponiveis': documentos_disponiveis,
+		'livros_de_protocolo': livros_de_protocolo,
+		'lista_de_setores': lista_de_setores,
+	}
+
+	return render(request, 'inout/protocolar_documento.html', context)
+
+@login_required
+def salvar_protocolo_documento(request):
+	lotacao_do_usuario_logado = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	numero_pagina = request.POST.get("pagina", False)
+	pagina = Pagina.objects.raw('SELECT * FROM pagina WHERE numero = %s AND fk_livro = %s', [numero_pagina, request.POST.get("livro", False)])
+	pagina_id = pagina[0].id
+
+	if not pagina_id:
+		with connection.cursor() as cursor:
+			cursor.execute('INSERT INTO pagina (fk_livro, numero) VALUES (%s, %s)', [request.POST.get("livro", False), numero_pagina])
+			cursor.execute('SELECT MAX(id) FROM pagina')
+			pagina_id = cursor.fetchone()[0]
+
+	with connection.cursor() as cursor:
+		cursor.execute('INSERT INTO protocolo (fk_documento, fk_setor_origem, fk_setor_destino, fk_pagina, entregue) VALUES (%s, %s, %s, %s, false)', [
+																																					request.POST.get("documento", False),
+																																					lotacao_do_usuario_logado[0].fk_setor.id,
+																																					request.POST.get("setor_destino", False),
+																																					pagina_id,
+																																					])
+
+	return redirect(reverse('inout:index'))
 
 def error_404_view(request, exception):
     
