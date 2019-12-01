@@ -8,14 +8,14 @@
     <div class="col-lg-6 mb-4">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">{{ documento.tipo_do_documento }} {{ documento.numero }}</h6>
+          <h6 class="m-0 font-weight-bold text-primary">{{ documento.tipo_do_documento }} {{ documento.numero }} - {{ documento.emissor }}</h6>
         </div>
         <div class="card-body">
           {% if documento %}
           <!-- Page Heading -->
-          <label>Data Recebimento: </label> {{ documento.data_de_entrada|date:'d/m/Y' }}
+          <label>Data Recebimento: </label> {{ documento.data_de_recebimento|date:'d/m/Y' }}
           <br />
-          <label>Tipo: </label> {{ documento.tipo }}
+          <label>Tipo: </label> {{ documento.tipo_do_documento }}
           <br />
           <label>Número: </label> {{ documento.numero }}
           <br />
@@ -25,9 +25,13 @@
           <br />
           <label>Despacho: </label> {{ documento.despacho }}
           <br />
-          <label>N° Processo: </label> {{ documento.processo.numero }}
+          <label>N° Processo: </label> {{ documento.fk_processo.numero }}
           <br />
           <label>Cadastrado por: </label> {{ documento.fk_user.username }}
+          <br />
+          {% if documento.entrega_pessoal == True  %}
+          <label><strong>ENTREGA PESSOAL</strong></label>
+          {% endif %}
           <br />
           <div class="row">
             <div class="col-lg-6 mb-4">
@@ -38,7 +42,7 @@
                   <div class="card bg-success text-white shadow">
                     <div class="card-body">
                       {{ prazo.vencimento|date:'d/m/Y' }}
-                      <div class="text-white-50 small">{{ prazo.tipo }}</div>
+                      <div class="text-white-50 small">{{ prazo.tipo_do_prazo }}</div>
                       <!--a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' documento.id prazo.id %}" class="bg-success card text-white shadow" />Encerrar</a-->
                       <span class="bg-success card text-white shadow centralizaTexto" />Encerrado</span>
                     </div>
@@ -49,7 +53,7 @@
                   <div class="card bg-warning text-white shadow">
                     <div class="card-body">
                       {{ prazo.vencimento|date:'d/m/Y' }}
-                      <div class="text-white-50 small">{{ prazo.tipo }}</div>
+                      <div class="text-white-50 small">{{ prazo.tipo_do_prazo }}</div>
                       <a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' documento.id prazo.id %}"
                         class="bg-warning card text-white shadow centralizaTexto" />Encerrar</a>
                     </div>
@@ -60,7 +64,7 @@
                   <div class="card bg-danger text-white shadow">
                     <div class="card-body">
                       {{ prazo.vencimento|date:'d/m/Y' }}
-                      <div class="text-white-50 small">{{ prazo.tipo }}</div>
+                      <div class="text-white-50 small">{{ prazo.tipo_do_prazo }}</div>
                       <a id="removeStyleLink" href="{% url 'inout:alterar_status_prazo' documento.id prazo.id %}"
                         class="bg-danger card text-white shadow centralizaTexto" />Encerrar</a>
                     </div>
@@ -110,7 +114,7 @@
           {% else %}
           <div class="form-group row">
               <div class="col-sm-6">
-                  <label>Data de Entrega: </label> {{ protocolo_documento.data_da_entrega }}
+                  <label>Data de Entrega: </label> {{ protocolo_documento.data_da_entrega|date:'d/m/Y' }}
               </div>
             </div>
           {% endif %}
@@ -118,6 +122,19 @@
       </div>
     </div>
     {% endif %}
+  </div>
+  <div>
+    <div>
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">{{ documento.tipo_do_documento }} {{ documento.numero }}</h6>
+        </div>
+        <div class="card-body">
+            <embed src="https://suap.ifrn.edu.br/media/upload/baseconhecimento/anexos/Novo_processo_de_verificacao-a8b2765f996042d78b473bf976ad11eb.pdf" type="application/pdf">
+            <!--embed src="{{ documento.pdf.url }}" type="application/pdf"-->
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <!-- /.container-fluid -->

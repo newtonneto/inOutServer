@@ -34,6 +34,7 @@ class Documento(models.Model):
     assunto = models.CharField(max_length=1000)
     despacho = models.CharField(max_length=200)
     entrega_pessoal = models.BooleanField()
+    pdf = models.FileField(upload_to = 'pdf/', null = True, blank = True)
 
     def __str__(self):
         return "{} {} - {}".format(self.tipo, self.numero, self.emissor)
@@ -154,7 +155,16 @@ class Pagina(models.Model):
 
 class Prazo(models.Model):
     fk_documento = models.ForeignKey(Documento, models.DO_NOTHING, db_column='fk_documento')
-    tipo = models.IntegerField()
+    tipo_choices = [
+        (1, "Audiência"),
+        (2, "Evento"),
+        (3, "Fiscalização"),
+        (4, "Palestra"),
+        (5, "Resposta"),
+        (6, "Reunião"),
+        (7, "Vistoria"),
+    ]
+    tipo = models.IntegerField(choices = tipo_choices, default = 5)
     vencimento = models.DateField()
     encerrado = models.IntegerField()
     dilacao = models.IntegerField()
@@ -162,6 +172,9 @@ class Prazo(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.tipo, self.vencimento)
+
+    def tipo_do_prazo(self):
+        return self.tipo_choices[self.tipo][1]
 
     class Meta:
         db_table = 'prazo'

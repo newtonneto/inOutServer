@@ -118,10 +118,14 @@ def salvarcadastro(request):
 																																														request.POST['orgao_expedidor_do_documento'],
 																																														request.POST['assunto_do_documento'],
 																																														request.POST['despacho_do_documento'],
-																																														request.POST.get('entrega_pessoal', False)
+																																														request.POST.get('entrega_pessoal', False),
 																																														])
 			cursor.execute('SELECT MAX(id) FROM documento')
 			documento_id = cursor.fetchone()[0]
+
+			documento_pdf = Documento.objects.get(pk = documento_id)
+			documento_pdf.pdf = request.FILES["pdf"]
+			documento_pdf.save()
 
 		""" try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário

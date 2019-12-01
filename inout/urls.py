@@ -1,5 +1,7 @@
 from django.urls import path
 from django.conf.urls import url, re_path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 app_name = "inout"
@@ -48,4 +50,4 @@ urlpatterns = [
 	re_path(r'^lista_protocolos_externos', views.lista_protocolos_externos , name = "lista_protocolos_externos"),
 	re_path(r'^lista_protocolos_internos', views.lista_protocolos_internos , name = "lista_protocolos_internos"),
 	re_path(r'^lista_protocolos_usf', views.lista_protocolos_usf , name = "lista_protocolos_usf"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

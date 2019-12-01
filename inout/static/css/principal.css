@@ -25,3 +25,8 @@
     border-radius: 1.8rem;
     height: 3.9em;
 }
+
+embed {
+	width: 100%;
+	height: 1000px;
+}
