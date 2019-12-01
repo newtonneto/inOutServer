@@ -1,5 +1,5 @@
-{% load staticfiles %}
-{% include "header.html" %}
+        {% extends 'base.html' %}
+        {% block content %}
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
@@ -43,8 +43,4 @@
 
         </div>
         <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-{% include "footer.html" %}
+        {% endblock %}

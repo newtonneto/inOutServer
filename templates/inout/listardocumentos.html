@@ -1,5 +1,5 @@
-{% load staticfiles %}
-{% include "header.html" %}
+        {% extends 'base.html' %}
+        {% block content %}
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
@@ -14,7 +14,7 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="display" id="tabela_datatables" >
                   <thead>
                     <tr>
                       <th>Data Recebimento</th>
@@ -25,6 +25,27 @@
                       <th>Prazo</th>
                     </tr>
                   </thead>
+                  <tbody>
+                    {% for documento in lista_de_documentos %}
+                      <tr>
+                        <td>{{ documento.data_de_recebimento|date:'d/m/Y' }}</td>
+                        <td>{{ documento.tipo_do_documento }}</a></td>
+                        <td><a href="{% url 'inout:detalhesdocumento' documento.id %}">{{ documento.numero }}</a></td>
+                        <td>{{ documento.emissor }}</td>
+                        <td>{% for prazo in documento.prazo_set.all %}
+                          <!--{% if prazo.vencimento|date:'d/m/Y' != timezone.now|date:'d/m/Y' %}-->
+                            {{ prazo.tipo_do_prazo }}
+                          <!--{% endif %}-->
+                          <br/>
+                        {% endfor %}</td>
+                        <td>{% for prazo in documento.prazo_set.all %}
+                          {{ prazo.vencimento|date:'d/m/Y' }}
+                          <br/>
+                        {% endfor %}</td>
+                        <!--td><a href="{% url 'inout:editar_documento' documento.id %}">Editar</a></td-->
+                      </tr>
+                    {% endfor %}
+                  </tbody>
                   <tfoot>
                     <tr>
                       <th>Data Recebimento</th>
@@ -35,27 +56,6 @@
                       <th>Prazo</th>
                     </tr>
                   </tfoot>
-                  <tbody>
-                    {% for documento in lista_de_documentos %}
-                      <tr>
-                        <td>{{ documento.data_de_recebimento|date:'d/m/Y' }}</td>
-                        <td>{{ documento.tipo_do_documento }}</a></td>
-                        <td><a href="{% url 'inout:detalhesdocumento' documento.id %}">{{ documento.numero }}</a></td>
-                        <td>{{ documento.emissor }}</td>
-                        <td>{% for prazo in documento.prazo_set.all %}
-                          <!--{% if prazo.vencimento|date:'d/m/Y' != timezone.now|date:'d/m/Y' %}-->
-                            {{ prazo.tipo }}
-                          <!--{% endif %}-->
-                          <br/>
-                        {% endfor %}</td>
-                        <td>{% for prazo in documento.prazo_set.all %}
-                          {{ prazo.vencimento|date:'d/m/Y' }}
-                          <br/>
-                        {% endfor %}</td>
-                        <td><a href="{% url 'inout:editar_documento' documento.id %}">Editar</a></td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
                 </table>
               </div>
             </div>
@@ -63,8 +63,4 @@
 
         </div>
         <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-{% include "footer.html" %}
+        {% endblock %}

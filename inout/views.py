@@ -89,8 +89,11 @@ def index(request):
 
 @login_required
 def cadastrar(request):
+	prazo = Prazo()
+
 	contexto = {
 		'titulo': "Cadastrar novo documento",
+		'lista_de_tipos_de_prazo': prazo.tipo_choices
 	}
 
 	return render(request, 'inout/cadastrar.html', contexto)
@@ -470,6 +473,7 @@ def protocolar_documento(request):
 	lista_de_setores = Setor.objects.raw('SELECT * FROM setor WHERE fk_orgao = %s', [lotacao_do_usuario_logado[0].fk_setor.fk_orgao.id])
 
 	context = {
+		'titulo': "Protocolar documento",
 		'documentos_disponiveis': documentos_disponiveis,
 		'livros_de_protocolo': livros_de_protocolo,
 		'lista_de_setores': lista_de_setores,

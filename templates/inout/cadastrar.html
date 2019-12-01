@@ -1,5 +1,5 @@
-{% load staticfiles %}
-{% include "header.html" %}
+        {% extends 'base.html' %}
+        {% block content %}
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
@@ -64,7 +64,12 @@
                       <div>
                         <div class="form-group row">
                           <div class="col-sm-6 mb-3 mb-sm-0">
-                            <input type="text" class="form-control form-control-user" id="tipo_1" name="tipo_1" placeholder="Tipo" />
+                            <!--input type="text" class="form-control form-control-user" id="tipo_1" name="tipo_1" placeholder="Tipo" /-->
+                            <select class="form-control form-control-user-alternative1" id="tipo_1" name="tipo_1" >
+                              {% for key, value in lista_de_tipos_de_prazo %}
+                              <option value="{{ key }}">{{ value }}</option>
+                              {% endfor %}
+                            </select>
                           </div>
                           <div class="col-sm-6">
                             <input type="date" class="form-control form-control-user" id="prazo_1" name="prazo_1" placeholder="Data" />
@@ -90,8 +95,4 @@
           </div>
         </div>
         <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-{% include "footer.html" %}
+        {% endblock %}
