@@ -229,7 +229,9 @@ def salvar_edicao_documento(request, documento_id):
 @login_required
 def listardocumentos(request):
 	#lista_de_documentos = Documento.objects.order_by('data_de_recebimento')
-	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento ORDER BY data_de_recebimento')
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	#lista_de_documentos = Documento.objects.raw('SELECT * FROM documento ORDER BY data_de_recebimento')
+	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN lotacao ON lotacao.fk_user = documento.fk_user WHERE fk_setor = %s', [lotacao_user[0].fk_setor.id])
 
 	contexto = {
 		'titulo': "Todos os documentos",
@@ -305,7 +307,9 @@ def documento_entregue(request, protocolo_documento_id):
 
 @login_required
 def listarprazos(request):
-	lista_de_documentos = Documento.objects.exclude(prazo__vencimento__lt = datetime.date.today()).exclude(prazo__vencimento = None)
+	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN prazo ON prazo.fk_documento = documento.id WHERE prazo.vencimento >= %s', [datetime.date.today()])
+	#lista_de_documentos = Documento.objects.exclude(prazo__vencimento__lt = datetime.date.today()).exclude(prazo__vencimento = None)
+
 	contexto = {
 		'titulo': "Prazos para vencer",
 		'lista_de_documentos': lista_de_documentos,
@@ -432,30 +436,45 @@ def lista_setores(request):
 
 @login_required
 def novo_protocolo(request):
-	lista_de_setores = Setor.objects.raw('SELECT * FROM setor INNER JOIN orgao ON setor.fk_orgao = orgao.id ORDER BY orgao.sigla')
-
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	meu_setor = Setor.objects.raw('SELECT * FROM setor WHERE id = %s', [lotacao_user[0].fk_setor.id])
+	
 	context = {
 		'titulo': "Cadastrar protocolo",
-		'lista_de_setores': lista_de_setores,
+		'ano': datetime.date.today().year,
+		'meu_setor': meu_setor[0],
 	}
 
 	return render(request, 'inout/novo_protocolo.html', context)
 
 @login_required
 def salvar_protocolo(request):
-	ano = request.POST.get("ano", False)
-	volume = request.POST.get("volume", False)
-	setor = request.POST.get("setor", False)
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	ano = datetime.date.today().year
+	#volume = request.POST.get("volume", False)
+	setor = Setor.objects.raw('SELECT * FROM setor WHERE id = %s', [lotacao_user[0].fk_setor.id])
 	tipo = request.POST.get("tipo", False)
+	ultimo_volume = Livro.objects.raw('SELECT * FROM livro WHERE id = (SELECT MAX(id) FROM livro WHERE fk_setor = %s AND tipo = %s)', [lotacao_user[0].fk_setor.id, tipo])
+	
+	try:
+		volume = (ultimo_volume[0].volume) + 1
+	except:
+		volume = 1
 
-	if ano and volume and setor and tipo:
+	if ano and volume and setor[0].id and tipo:
 		with connection.cursor() as cursor:
 			cursor.execute('INSERT INTO livro (fk_setor, tipo, ano, volume, encerrado) VALUES (%s, %s, %s, %s, false)', [
-																															setor,
+																															setor[0].id,
 																															tipo,
 																															ano,
 																															volume,
 																														])
+			cursor.execute('UPDATE livro SET encerrado = true WHERE fk_setor = %s AND tipo = %s AND ano = %s AND volume = %s', [
+																															setor[0].id,
+																															tipo,
+																															ano,
+																															volume - 1,
+			])
 		messages.add_message(request, messages.SUCCESS, "Protocolo cadastrado com sucesso")
 		return redirect(reverse('inout:novo_protocolo'))
 
@@ -464,11 +483,28 @@ def salvar_protocolo(request):
 		return redirect(reverse('inout:novo_protocolo'))
 
 @login_required
+def lista_protocolos_internos(request):
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 2', [lotacao_user[0].fk_setor.id])
+
+	context = {
+		'titulo': "Protocolos internos",
+		'livros_de_protocolo': livros_de_protocolo,
+	}
+
+	return render(request, 'inout/lista_protocolos_internos.html', context)
+
+@login_required
 def protocolar_documento(request):
 	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE documento.id NOT IN (SELECT DISTINCT fk_documento FROM protocolo)')
 	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE NOT EXISTS (SELECT DISTINCT fk_documento FROM protocolo WHERE protocolo.fk_documento = documento.id)')
-	documentos_disponiveis = Documento.objects.raw('SELECT doc.* FROM documento doc LEFT OUTER JOIN protocolo prot ON doc.id = prot.fk_documento WHERE prot.fk_documento IS null')
-	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro')
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	#lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN lotacao ON lotacao.fk_user = documento.fk_user WHERE fk_setor = %s', [lotacao_user[0].fk_setor.id])
+	documentos_disponiveis = Documento.objects.raw('SELECT doc.* FROM documento doc '
+													+ 'LEFT OUTER JOIN protocolo prot ON doc.id = prot.fk_documento '
+													+ 'INNER JOIN lotacao ON lotacao.fk_user = doc.fk_user '
+													+ 'WHERE fk_setor = %s AND prot.fk_documento IS null', [lotacao_user[0].fk_setor.id])
+	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND encerrado = false', [lotacao_user[0].fk_setor.id])
 	lotacao_do_usuario_logado = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
 	lista_de_setores = Setor.objects.raw('SELECT * FROM setor WHERE fk_orgao = %s', [lotacao_do_usuario_logado[0].fk_setor.fk_orgao.id])
 
@@ -533,15 +569,6 @@ def lista_protocolos_externos(request):
 	}
 
 	return render(request, 'inout/lista_protocolos_externos.html', context)
-
-@login_required
-def lista_protocolos_internos(request):
-
-	context = {
-		'titulo': "Protocolos internos",
-	}
-
-	return render(request, 'inout/lista_protocolos_internos.html', context)
 
 @login_required
 def lista_protocolos_usf(request):
@@ -639,13 +666,16 @@ def documentos_do_dia():
 
 #Retorna todos os documentos cadastrados na semana atual
 def documentos_da_semana():
-	feitos_semana = Documento.objects.filter(data_de_recebimento__week = datetime.date.today().isocalendar()[1])
+	feitos_semana = Documento.objects.raw('SELECT * FROM documento WHERE WEEK(data_de_recebimento) = WEEK(%s)', [datetime.date.today()])
+	#feitos_semana = Documento.objects.raw('SELECT * FROM documento WHERE WEEK(data_de_recebimento) = %s', [datetime.date.today().isocalendar()[1]])
+	#feitos_semana = Documento.objects.filter(data_de_recebimento__week = datetime.date.today().isocalendar()[1])
 
 	return feitos_semana
 
 #Retorna todos os documentos cadastrados no mês atual
 def documentos_do_mes():
-	feitos_mes = Documento.objects.filter(data_de_recebimento__month = datetime.date.today().month)
+	feitos_mes = Documento.objects.raw('SELECT * FROM documento WHERE MONTH(data_de_recebimento) = %s', [datetime.date.today().month])
+	#feitos_mes = Documento.objects.filter(data_de_recebimento__month = datetime.date.today().month)
 
 	return feitos_mes
 

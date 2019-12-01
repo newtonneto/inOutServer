@@ -23,6 +23,7 @@
                       <th>Expedido</th>
                       <th>Tipo Prazo</th>
                       <th>Prazo</th>
+                      <th>Editar</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -42,7 +43,7 @@
                           {{ prazo.vencimento|date:'d/m/Y' }}
                           <br/>
                         {% endfor %}</td>
-                        <!--td><a href="{% url 'inout:editar_documento' documento.id %}">Editar</a></td-->
+                        <td><a href="{% url 'inout:editar_documento' documento.id %}"><img src="https://img.icons8.com/cotton/32/000000/multi-edit.png" /></a></td>
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -54,6 +55,7 @@
                       <th>Expedido</th>
                       <th>Tipo Prazo</th>
                       <th>Prazo</th>
+                      <th>Editar</th>
                     </tr>
                   </tfoot>
                 </table>

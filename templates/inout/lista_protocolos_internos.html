@@ -8,9 +8,42 @@
           <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
           <div class="col-lg-12 mb-4">
             <div class="card shadow mb-4">
-              <div class="col-lg-7">
-                <div class="p-5">
-                  
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Resultados</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="display" id="tabela_datatables" >
+                    <thead>
+                      <tr>
+                        <th>Setor</th>
+                        <th>Ano</th>
+                        <th>Tipo</th>
+                        <th>Volume</th>
+                        <th>Encerrado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for livro in livros_de_protocolo %}
+                        <tr>
+                          <td>{{ livro.fk_setor.sigla }}</td>
+                          <td>{{ livro.ano }}</td>
+                          <td>{{ livro.tipo_do_livro }}</td>
+                          <td>{{ livro.volume }}</td>
+                          <td>{{ livro.encerrado }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Setor</th>
+                        <th>Ano</th>
+                        <th>Tipo</th>
+                        <th>Volume</th>
+                        <th>Encerrado</th>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
               </div>
             </div>

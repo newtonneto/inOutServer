@@ -18,22 +18,25 @@
                     <tr>
                       <th>Sigla</th>
                       <th>Nome</th>
+                      <th>Órgão</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Sigla</th>
-                      <th>Nome</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                     {% for setor in lista_de_setores %}
                       <tr>
                         <td>{{ setor.sigla }}</td>
                         <td>{{ setor.nome }}</a></td>
+                        <td>{{ setor.fk_orgao }}</td>
                       </tr>
                     {% endfor %}
                   </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Sigla</th>
+                      <th>Nome</th>
+                      <th>Órgão</th>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>

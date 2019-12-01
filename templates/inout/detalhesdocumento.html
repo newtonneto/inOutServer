@@ -106,7 +106,7 @@
           </div>
           {% if protocolo_documento.entregue == False %}
           <div class="form-group row">
-            <div class="col-sm-6">
+            <div class="col-sm-6 mb-3 mb-sm-0">
                 <a id="removeStyleLink" href="{% url 'inout:documento_entregue' protocolo_documento.id %}" class="bg-danger card text-white shadow centralizaTexto" >Entregue</a>
               <!--input class="btn btn-primary btn-user btn-block" type="submit" value="Entregue" /-->
             </div>

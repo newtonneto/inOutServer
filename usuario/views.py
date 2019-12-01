@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from inout.models import Lotacao, Orgao, Setor
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from datetime import timedelta
 from django.db import connection
 import datetime
@@ -54,8 +56,10 @@ def salva_usuario(request):
         return redirect(reverse('registration:cadastro_usuario'))
 
     messages.add_message(request, messages.SUCCESS, "Usuário cadastrado com sucesso")
+    
+    login(request, user)
 
-    return render(request, 'registration/login.html')
+    return redirect(reverse('inout:index'))
 
 @login_required
 def lista_usuarios(request):

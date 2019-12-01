@@ -9,7 +9,37 @@ $(document).ready(function() {
 		e.preventDefault();
 		if(x < max_fields){ //max input box allowed
 			x++; //text box increment
-			$(wrapper).append('<div><div class="form-group row"><div class="col-sm-6 mb-3 mb-sm-0"><input type="text" class="form-control form-control-user" id="tipo_' + i + '" name="tipo_' + i + '" placeholder="Tipo" /></div><div class="col-sm-6"><input type="date" class="form-control form-control-user" id="prazo_' + i + '" name="prazo_' + i + '" placeholder="Data" /></div></div><a href="#" class="remove_field">X</a></div>'); //add input box
+			$(wrapper).append(
+							'<div>'
+								+'<div class="form-group row">'
+									+'<div class="col-sm-6 mb-3 mb-sm-0">'
+										+'<select class="form-control form-control-user-alternative1" id="tipo_' + i + '" name="tipo_' + i + '" placeholder="Tipo" >'
+											+'<option label=" "></option>'
+											+'<option value="1">Audiência</option>'
+											+'<option value="2">Evento</option>'
+											+'<option value="3">Fiscalização</option>'
+											+'<option value="4">Palestra</option>'
+											+'<option value="5">Resposta</option>'
+											+'<option value="6">Reunião</option>'
+											+'<option value="7">Vistoria</option>'
+										+'</select>'
+									+'</div>'
+									+'<div class="col-sm-6">'
+										+'<input type="date" class="form-control form-control-user" id="prazo_' + i + '" name="prazo_' + i + '" placeholder="Data" />'
+									+'</div>'
+								+'</div>'
+							+'</div>'
+							/* '<div>'
+								+'<div class="form-group row">'
+									+'<div class="col-sm-6 mb-3 mb-sm-0">'
+										+'<input type="text" class="form-control form-control-user" id="tipo_' + i + '" name="tipo_' + i + '" placeholder="Tipo" />'
+									+'</div>'
+									+'<div class="col-sm-6">'
+										+'<input type="date" class="form-control form-control-user" id="prazo_' + i + '" name="prazo_' + i + '" placeholder="Data" />'
+									+'</div>'
+								+'</div>'
+								+'<a href="#" class="remove_field">X</a>'
+							+'</div>' */); //add input box
 			i++;
 		}
 	});

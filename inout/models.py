@@ -40,7 +40,7 @@ class Documento(models.Model):
         return "{} {} - {}".format(self.tipo, self.numero, self.emissor)
     
     def tipo_do_documento(self):
-        return self.tipos_choices[self.tipo][1]
+        return self.tipos_choices[self.tipo - 1][1]
 
     class Meta:
         db_table = 'documento'
@@ -59,13 +59,13 @@ class Livro(models.Model):
     encerrado = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return "Protocolo {} {} Volume {}".format(self.tipos_choices[self.tipo][1], self.ano, self.volume)
+        return "Protocolo {} {} Volume {}".format(self.tipos_choices[self.tipo - 1][1], self.ano, self.volume)
 
     def nome_do_livro(self):
-        return "{} {} Volume {}".format(self.tipos_choices[self.tipo][1], self.ano, self.volume)
+        return "{} {} {} Volume {}".format(self.fk_setor.sigla, self.tipos_choices[self.tipo - 1][1], self.ano, self.volume)
 
     def tipo_do_livro(self):
-        return self.tipos_choices[self.tipo][1]
+        return self.tipos_choices[self.tipo - 1][1]
 
     class Meta:
         db_table = 'livro'
@@ -174,7 +174,7 @@ class Prazo(models.Model):
         return "{} {}".format(self.tipo, self.vencimento)
 
     def tipo_do_prazo(self):
-        return self.tipo_choices[self.tipo][1]
+        return self.tipo_choices[self.tipo - 1][1]
 
     class Meta:
         db_table = 'prazo'
