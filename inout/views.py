@@ -1,3 +1,4 @@
+from django.views.generic import ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -483,6 +484,18 @@ def salvar_protocolo(request):
 		return redirect(reverse('inout:novo_protocolo'))
 
 @login_required
+def lista_protocolos_externos(request):
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 1', [lotacao_user[0].fk_setor.id])
+
+	context = {
+		'titulo': "Protocolos externos",
+		'livros_de_protocolo': livros_de_protocolo,
+	}
+
+	return render(request, 'inout/lista_protocolos.html', context)
+
+@login_required
 def lista_protocolos_internos(request):
 	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
 	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 2', [lotacao_user[0].fk_setor.id])
@@ -492,7 +505,24 @@ def lista_protocolos_internos(request):
 		'livros_de_protocolo': livros_de_protocolo,
 	}
 
-	return render(request, 'inout/lista_protocolos_internos.html', context)
+	return render(request, 'inout/lista_protocolos.html', context)
+
+@login_required
+def lista_protocolos_usf(request):
+	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 3', [lotacao_user[0].fk_setor.id])
+
+	context = {
+		'titulo': "Protocolos USF",
+		'livros_de_protocolo': livros_de_protocolo,
+	}
+
+	return render(request, 'inout/lista_protocolos.html', context)
+
+#View Generica
+class lista_protocolos(ListView):
+	model = Livro
+	template_name = 'inout/lista_protocolos_internos.html',
 
 @login_required
 def protocolar_documento(request):
@@ -560,24 +590,6 @@ def busca_avancada(request):
 	}
 
 	return render(request, 'inout/busca_avancada.html', context)
-
-@login_required
-def lista_protocolos_externos(request):
-
-	context = {
-		'titulo': "Protocolos externos",
-	}
-
-	return render(request, 'inout/lista_protocolos_externos.html', context)
-
-@login_required
-def lista_protocolos_usf(request):
-
-	context = {
-		'titulo': "Protocolos USF",
-	}
-
-	return render(request, 'inout/lista_protocolos_usf.html', context)
 
 
 ##### DADOS DOS GRÁFICOS - criar arquivo

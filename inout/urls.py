@@ -3,6 +3,7 @@ from django.conf.urls import url, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from inout.views import lista_protocolos
 
 app_name = "inout"
 urlpatterns = [
@@ -43,7 +44,10 @@ urlpatterns = [
 	re_path(r'^lista_setores', views.lista_setores , name = "lista_setores"),
 	re_path(r'^novo_protocolo', views.novo_protocolo , name = "novo_protocolo"),
 	re_path(r'^salvar_protocolo', views.salvar_protocolo , name = "salvar_protocolo"),
+	re_path(r'^lista_protocolos_externos', views.lista_protocolos_externos , name = "lista_protocolos_externos"),
 	re_path(r'^lista_protocolos_internos', views.lista_protocolos_internos , name = "lista_protocolos_internos"),
+	re_path(r'^lista_protocolos_usf', views.lista_protocolos_usf , name = "lista_protocolos_usf"),
+	re_path(r'^lista_protocolos', lista_protocolos.as_view(), name = "lista_protocolos"),
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
 	url(r'^api/chart/pie/$', views.chart_data_pie.as_view()),
 	#Falta implementar
