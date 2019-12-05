@@ -6,8 +6,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from datetime import timedelta
-from django.db import connection
+from django.db import connections
 import datetime
+
+cursor_mysql = connections['default'].cursor()
+cursor_postgresql = connections['postgresql'].cursor()
+
 # Create your views here.
 def cadastro_usuario(request):
     lista_de_setores = Setor.objects.raw('SELECT * FROM setor')
@@ -22,10 +26,15 @@ def cadastro_usuario(request):
     return render(request, 'usuario/cadastro_usuario.html', contexto)
 
 def salva_usuario(request):
-    user = User.objects.create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
+    user = User.objects.using('default').create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
     user.first_name = request.POST.get('first_name', False)
     user.last_name = request.POST.get('last_name', False)
     user.save()
+
+    user_postgresql = User.objects.using('postgresql').create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
+    user_postgresql.first_name = request.POST.get('first_name', False)
+    user_postgresql.last_name = request.POST.get('last_name', False)
+    user_postgresql.save()
 
     """ setor = Setor()
     setor.orgao = Orgao.objects.get(pk = request.POST.get('orgao', False))
@@ -38,17 +47,32 @@ def salva_usuario(request):
     lotacao.setor = setor
     lotacao.save() """
 
-    setor = Setor.objects.raw('SELECT * FROM setor WHERE id = %s', [request.POST.get('setor', False)])
+    setor = Setor.objects.using('default').raw('SELECT * FROM setor WHERE id = %s', [request.POST.get('setor', False)])
     cargo = request.POST.get('cargo', False)
 
     if setor and cargo:
-        with connection.cursor() as cursor:
-            cursor.execute('INSERT INTO lotacao (fk_user, fk_setor, cargo, entrada) VALUES (%s, %s, %s, %s)', [
-                                                                                                                user.id,
-                                                                                                                request.POST.get('setor', False),
-                                                                                                                cargo,
-                                                                                                                datetime.date.today(),
-                                                                                                                ])
+        #with connection.cursor() as cursor:
+        cursor_mysql.execute('INSERT INTO lotacao '
+                                + '(fk_user, fk_setor, cargo, entrada) '
+                            + 'VALUES '
+                                + '(%s, %s, %s, %s)', [
+                                                        user.id,
+                                                        request.POST.get('setor', False),
+                                                        cargo,
+                                                        datetime.date.today(),
+                                                        ])
+
+        cursor_postgresql.execute('INSERT INTO lotacao '
+                                    + '(fk_user, fk_setor, cargo, entrada) '
+                                + 'VALUES '
+                                    + '(%s, %s, %s, %s)', [
+                                                            user.id,
+                                                            request.POST.get('setor', False),
+                                                            cargo,
+                                                            datetime.date.today(),
+                                                            ])
+
+
     
     else:
         messages.add_message(request, messages.ERROR, "Preencha todos os campos")

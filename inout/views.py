@@ -9,11 +9,15 @@ from django.urls import reverse
 from django.template import loader
 from .models import Documento, Prazo, Processo, Orgao, Setor, Livro, Pagina, Protocolo, Lotacao
 from django.db import connection
+from django.db import connections
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
+
+cursor_mysql = connections['default'].cursor()
+cursor_postgresql = connections['postgresql'].cursor()
 
 #Metodos de controle
 
@@ -113,23 +117,46 @@ def salvarcadastro(request):
 		documento.assunto = request.POST['assunto_do_documento']
 		documento.despacho = request.POST['despacho_do_documento'] """
 
-		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO documento (fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho, entrega_pessoal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', [
-																																														request.user.id,
-																																														datetime.date.today(),
-																																														int(request.POST['tipo_de_documento']),
-																																														request.POST['numero_do_documento'],
-																																														request.POST['orgao_expedidor_do_documento'],
-																																														request.POST['assunto_do_documento'],
-																																														request.POST['despacho_do_documento'],
-																																														request.POST.get('entrega_pessoal', False),
-																																														])
-			cursor.execute('SELECT MAX(id) FROM documento')
-			documento_id = cursor.fetchone()[0]
+		#with connection.cursor() as cursor:
+		cursor_mysql.execute('INSERT INTO documento '
+								+ '(fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho, entrega_pessoal) '
+							+ 'VALUES '
+								+ '(%s, %s, %s, %s, %s, %s, %s, %s)', [
+																		request.user.id,
+																		datetime.date.today(),
+																		int(request.POST['tipo_de_documento']),
+																		request.POST['numero_do_documento'],
+																		request.POST['orgao_expedidor_do_documento'],
+																		request.POST['assunto_do_documento'],
+																		request.POST['despacho_do_documento'],
+																		request.POST.get('entrega_pessoal', False),
+																		])
+		cursor_mysql.execute('SELECT MAX(id) FROM documento')
+		documento_id = cursor_mysql.fetchone()[0]
 
-			documento_pdf = Documento.objects.get(pk = documento_id)
-			documento_pdf.pdf = request.FILES["pdf"]
-			documento_pdf.save()
+		documento_pdf = Documento.objects.using('default').get(pk = documento_id)
+		documento_pdf.pdf = request.FILES["pdf"]
+		documento_pdf.save()
+
+		cursor_postgresql.execute('INSERT INTO documento '
+									+ '(fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho, entrega_pessoal) '
+								+ 'VALUES '
+									+ '(%s, %s, %s, %s, %s, %s, %s, %s)', [
+																			request.user.id,
+																			datetime.date.today(),
+																			int(request.POST['tipo_de_documento']),
+																			request.POST['numero_do_documento'],
+																			request.POST['orgao_expedidor_do_documento'],
+																			request.POST['assunto_do_documento'],
+																			request.POST['despacho_do_documento'],
+																			request.POST.get('entrega_pessoal', False),
+																			])
+		cursor_postgresql.execute('SELECT MAX(id) FROM documento')
+		documento_id = cursor_postgresql.fetchone()[0]
+
+		documento_pdf = Documento.objects.using('postgresql').get(pk = documento_id)
+		documento_pdf.pdf = request.FILES["pdf"]
+		documento_pdf.save()
 
 		""" try:
 			#Tenta recuperar o objeto do processo com o número informado no formulário
@@ -366,14 +393,30 @@ def salvar_orgao(request):
 		orgao.estado = estado
 		orgao.municipio = municipio
 		orgao.save() """
-		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO orgao (nome, sigla, esfera, estado, municipio, ativo) VALUES (%s, %s, %s, %s, %s, true)', [
-																																	nome,
-																																	sigla,
-																																	esfera,
-																																	estado,
-																																	municipio,
-																																])
+
+		#with connection.cursor() as cursor:
+		cursor_mysql.execute('INSERT INTO orgao '
+								+ '(nome, sigla, esfera, estado, municipio, ativo) '
+							+ 'VALUES '
+								+ '(%s, %s, %s, %s, %s, true)', [
+																	nome,
+																	sigla,
+																	esfera,
+																	estado,
+																	municipio,
+																])
+
+		#with connections['postgresql'].cursor() as cursor:
+		cursor_postgresql.execute('INSERT INTO orgao '
+									+ '(nome, sigla, esfera, estado, municipio, ativo) '
+								+ 'VALUES '
+									+ '(%s, %s, %s, %s, %s, true)', [
+																		nome,
+																		sigla,
+																		esfera,
+																		estado,
+																		municipio,
+																	])
 
 		messages.add_message(request, messages.SUCCESS, "Orgão cadastrado com sucesso")
 		return redirect(reverse('inout:novo_orgao'))
@@ -395,7 +438,7 @@ def lista_orgaos(request):
 
 @login_required
 def novo_setor(request):
-	lista_de_orgaos = Orgao.objects.raw('SELECT * FROM orgao')
+	lista_de_orgaos = Orgao.objects.using('default').raw('SELECT * FROM orgao')
 
 	context = {
 		'titulo': "Cadastrar setor",
