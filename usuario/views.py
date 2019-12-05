@@ -26,12 +26,12 @@ def cadastro_usuario(request):
     return render(request, 'usuario/cadastro_usuario.html', contexto)
 
 def salva_usuario(request):
-    user = User.objects.using('default').create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
+    user = User.objects.db_manager('default').create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
     user.first_name = request.POST.get('first_name', False)
     user.last_name = request.POST.get('last_name', False)
     user.save()
 
-    user_postgresql = User.objects.using('postgresql').create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
+    user_postgresql = User.objects.db_manager('postgresql').create_user(request.POST.get('username', False), password = request.POST.get('password', False), email = request.POST.get('email', False))
     user_postgresql.first_name = request.POST.get('first_name', False)
     user_postgresql.last_name = request.POST.get('last_name', False)
     user_postgresql.save()

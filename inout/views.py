@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
 from .models import Documento, Prazo, Processo, Orgao, Setor, Livro, Pagina, Protocolo, Lotacao
-from django.db import connection
+#from django.db import connection
 from django.db import connections
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -172,16 +172,27 @@ def salvarcadastro(request):
 
 		processo = request.POST.get('numero_do_processo', False)
 		if processo:
-			objeto_processo = Processo.objects.raw('SELECT * FROM processo WHERE numero = %s', [processo])
+			objeto_processo = Processo.objects.using('default').raw('SELECT * FROM processo WHERE numero = %s', [processo])
 			if objeto_processo:
-				with connection.cursor() as cursor:
-					cursor.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo[0].id, documento_id])
+				#with connection.cursor() as cursor:
+				cursor_mysql.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo[0].id, documento_id])
 			else:
-				with connection.cursor() as cursor:
-					cursor.execute('INSERT INTO processo (numero) VALUES (%s)', [processo])
-					cursor.execute('SELECT MAX(id) FROM processo')
-					objeto_processo_id = cursor.fetchone()[0]
-					cursor.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo_id, documento_id])
+				#with connection.cursor() as cursor:
+				cursor_mysql.execute('INSERT INTO processo (numero) VALUES (%s)', [processo])
+				cursor_mysql.execute('SELECT MAX(id) FROM processo')
+				objeto_processo_id = cursor_mysql.fetchone()[0]
+				cursor_mysql.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo_id, documento_id])
+
+			objeto_processo = Processo.objects.using('postgresql').raw('SELECT * FROM processo WHERE numero = %s', [processo])
+			if objeto_processo:
+				#with connection.cursor() as cursor:
+				cursor_postgresql.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo[0].id, documento_id])
+			else:
+				#with connection.cursor() as cursor:
+				cursor_postgresql.execute('INSERT INTO processo (numero) VALUES (%s)', [processo])
+				cursor_postgresql.execute('SELECT MAX(id) FROM processo')
+				objeto_processo_id = cursor_postgresql.fetchone()[0]
+				cursor_postgresql.execute('UPDATE documento SET fk_processo = %s WHERE id = %s', [objeto_processo_id, documento_id])
 
 		#Salva o novo documento
 		#documento.save()
@@ -213,12 +224,24 @@ def salvarcadastro(request):
 			prazo_data = request.POST.get(data, False)
 
 			if prazo_tipo and prazo_data:
-				with connection.cursor() as cursor:
-					cursor.execute('INSERT INTO prazo (fk_documento, tipo, vencimento, encerrado, dilacao) VALUES (%s, %s, %s, false, false)', [
-																												documento_id,
-																												prazo_tipo,
-																												prazo_data,
-																												])
+			#with connection.cursor() as cursor:
+				cursor_mysql.execute('INSERT INTO prazo '
+										+ '(fk_documento, tipo, vencimento, encerrado, dilacao) '
+									+ 'VALUES '
+										+ '(%s, %s, %s, false, false)', [
+																			documento_id,
+																			prazo_tipo,
+																			prazo_data,
+																			])
+
+				cursor_postgresql.execute('INSERT INTO prazo '
+											+ '(fk_documento, tipo, vencimento, encerrado, dilacao) '
+										+ 'VALUES '
+											+ '(%s, %s, %s, false, false)', [
+																				documento_id,
+																				prazo_tipo,
+																				prazo_data,
+																				])
 			else:
 				break
 			indice += 1
@@ -454,12 +477,25 @@ def salvar_setor(request):
 	orgao = request.POST.get("orgao", False)
 
 	if nome and sigla and orgao:
-		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO setor (fk_orgao, nome, sigla, ativo) VALUES (%s, %s, %s, true)', [
-																											orgao,
-																											nome,
-																											sigla,
-																										])
+	#with connection.cursor() as cursor:
+		cursor_mysql.execute('INSERT INTO setor '
+								+ '(fk_orgao, nome, sigla, ativo) '
+							+ 'VALUES '
+								+ '(%s, %s, %s, true)', [
+															orgao,
+															nome,
+															sigla,
+														])
+
+		cursor_postgresql.execute('INSERT INTO setor '
+									+ '(fk_orgao, nome, sigla, ativo) '
+								+ 'VALUES '
+									+ '(%s, %s, %s, true)', [
+																orgao,
+																nome,
+																sigla,
+															])
+
 		messages.add_message(request, messages.SUCCESS, "Setor cadastrado com sucesso")
 		return redirect(reverse('inout:novo_setor'))
 
