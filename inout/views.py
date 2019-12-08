@@ -265,15 +265,39 @@ def editar_documento(request, documento_id):
 
 def salvar_edicao_documento(request, documento_id):
 	if request.method == "POST":
-		with connection.cursor() as cursor:
-			cursor.execute('UPDATE documento SET tipo = %s, numero = %s, emissor = %s, assunto = %s, despacho = %s WHERE id = %s', [
-																																	int(request.POST['tipo_de_documento']),
-																																	request.POST['numero_do_documento'],
-																																	request.POST['orgao_expedidor_do_documento'],
-																																	request.POST['assunto_do_documento'],
-																																	request.POST['despacho_do_documento'],
-																																	documento_id,
-																																])
+		#with connection.cursor() as cursor:
+		cursor_mysql.execute('UPDATE documento SET '
+								+ 'tipo = %s, '
+								+ 'numero = %s, '
+								+ 'emissor = %s, '
+								+ 'assunto = %s, '
+								+ 'despacho = %s '
+							+ 'WHERE '
+								+ 'id = %s', [
+												int(request.POST['tipo_de_documento']),
+												request.POST['numero_do_documento'],
+												request.POST['orgao_expedidor_do_documento'],
+												request.POST['assunto_do_documento'],
+												request.POST['despacho_do_documento'],
+												documento_id,
+												])
+
+		cursor_postgresql.execute('UPDATE documento SET '
+									+ 'tipo = %s, '
+									+ 'numero = %s, '
+									+ 'emissor = %s, '
+									+ 'assunto = %s, '
+									+ 'despacho = %s '
+								+ 'WHERE '
+									+ 'id = %s', [
+													int(request.POST['tipo_de_documento']),
+													request.POST['numero_do_documento'],
+													request.POST['orgao_expedidor_do_documento'],
+													request.POST['assunto_do_documento'],
+													request.POST['despacho_do_documento'],
+													documento_id,
+													])
+
 		return redirect(reverse('inout:listardocumentos'))
 
 #Retorna todos os documentos cadastrados no sistema
@@ -351,14 +375,30 @@ def detalhesdocumento(request, documento_id):
 
 @login_required
 def documento_entregue(request, protocolo_documento_id):
-	with connection.cursor() as cursor:
-		cursor.execute('UPDATE protocolo SET entregue = true, data_da_entrega = %s WHERE id = %s', [datetime.date.today(), protocolo_documento_id])
+	#with connection.cursor() as cursor:
+	cursor_mysql.execute('UPDATE protocolo SET '
+							+ 'entregue = true, '
+							+ 'data_da_entrega = %s '
+						+ 'WHERE '
+							+ 'id = %s', [
+											datetime.date.today(),
+											protocolo_documento_id
+											])
+
+	cursor_postgresql.execute('UPDATE protocolo SET '
+								+ 'entregue = true, '
+								+ 'data_da_entrega = %s '
+							+ 'WHERE '
+								+ 'id = %s', [
+												datetime.date.today(),
+												protocolo_documento_id
+												])
 	
 	return redirect(reverse('inout:listardocumentos'))
 
 @login_required
 def listarprazos(request):
-	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN prazo ON prazo.fk_documento = documento.id WHERE prazo.vencimento >= %s', [datetime.date.today()])
+	lista_de_documentos = Documento.objects.using('default').raw('SELECT * FROM documento INNER JOIN prazo ON prazo.fk_documento = documento.id WHERE prazo.vencimento >= %s', [datetime.date.today()])
 	#lista_de_documentos = Documento.objects.exclude(prazo__vencimento__lt = datetime.date.today()).exclude(prazo__vencimento = None)
 
 	contexto = {
@@ -387,8 +427,20 @@ def alterar_status_prazo(request, documento_id, prazo_id):
 	if (prazo.encerrado == False):
 		prazo.encerrado = True
 		prazo.save() """
-	with connection.cursor() as cursor:
-		cursor.execute('UPDATE prazo SET encerrado = true WHERE id = %s', [prazo_id])
+	#with connection.cursor() as cursor:
+	cursor_mysql.execute('UPDATE prazo SET '
+							+ 'encerrado = true '
+						+ 'WHERE '
+							+ 'id = %s', [
+											prazo_id
+											])
+
+	cursor_postgresql.execute('UPDATE prazo SET '
+								+ 'encerrado = true '
+							+ 'WHERE '
+								+ 'id = %s', [
+												prazo_id
+												])
 
 	return redirect(reverse('inout:detalhesdocumento', args=[documento_id]))
 
@@ -450,7 +502,7 @@ def salvar_orgao(request):
 
 @login_required
 def lista_orgaos(request):
-	lista_de_orgaos = Orgao.objects.raw('SELECT * FROM orgao')
+	lista_de_orgaos = Orgao.objects.using('default').raw('SELECT * FROM orgao')
 
 	context = {
 		'titulo': "Lista de órgãos",
@@ -505,7 +557,7 @@ def salvar_setor(request):
 
 @login_required
 def lista_setores(request):
-	lista_de_setores = Setor.objects.raw('SELECT * FROM setor INNER JOIN orgao ON setor.fk_orgao = orgao.id ORDER BY orgao.sigla')
+	lista_de_setores = Setor.objects.using('default').raw('SELECT * FROM setor INNER JOIN orgao ON setor.fk_orgao = orgao.id ORDER BY orgao.sigla')
 
 	context = {
 		'titulo': "Lista de setores por órgão",
@@ -516,8 +568,8 @@ def lista_setores(request):
 
 @login_required
 def novo_protocolo(request):
-	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	meu_setor = Setor.objects.raw('SELECT * FROM setor WHERE id = %s', [lotacao_user[0].fk_setor.id])
+	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	meu_setor = Setor.objects.using('default').raw('SELECT * FROM setor WHERE id = %s', [lotacao_user[0].fk_setor.id])
 	
 	context = {
 		'titulo': "Cadastrar protocolo",
@@ -529,12 +581,12 @@ def novo_protocolo(request):
 
 @login_required
 def salvar_protocolo(request):
-	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
 	ano = datetime.date.today().year
 	#volume = request.POST.get("volume", False)
-	setor = Setor.objects.raw('SELECT * FROM setor WHERE id = %s', [lotacao_user[0].fk_setor.id])
+	setor = Setor.objects.using('default').raw('SELECT * FROM setor WHERE id = %s', [lotacao_user[0].fk_setor.id])
 	tipo = request.POST.get("tipo", False)
-	ultimo_volume = Livro.objects.raw('SELECT * FROM livro WHERE id = (SELECT MAX(id) FROM livro WHERE fk_setor = %s AND tipo = %s)', [lotacao_user[0].fk_setor.id, tipo])
+	ultimo_volume = Livro.objects.using('default').raw('SELECT * FROM livro WHERE id = (SELECT MAX(id) FROM livro WHERE fk_setor = %s AND tipo = %s)', [lotacao_user[0].fk_setor.id, tipo])
 	
 	try:
 		volume = (ultimo_volume[0].volume) + 1
@@ -542,19 +594,59 @@ def salvar_protocolo(request):
 		volume = 1
 
 	if ano and volume and setor[0].id and tipo:
-		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO livro (fk_setor, tipo, ano, volume, encerrado) VALUES (%s, %s, %s, %s, false)', [
-																															setor[0].id,
-																															tipo,
-																															ano,
-																															volume,
-																														])
-			cursor.execute('UPDATE livro SET encerrado = true WHERE fk_setor = %s AND tipo = %s AND ano = %s AND volume = %s', [
-																															setor[0].id,
-																															tipo,
-																															ano,
-																															volume - 1,
-			])
+		#with connection.cursor() as cursor:
+		cursor_mysql.execute('INSERT INTO livro '
+								+ '(fk_setor, tipo, ano, volume, encerrado) '
+							+ 'VALUES '
+								+ '(%s, %s, %s, %s, false)', [
+																setor[0].id,
+																tipo,
+																ano,
+																volume,
+																])
+
+		cursor_mysql.execute('UPDATE livro SET '
+								+ 'encerrado = true '
+							+ 'WHERE '
+								+ 'fk_setor = %s '
+									+ 'AND '
+								+ 'tipo = %s '
+									+ 'AND '
+								+ 'ano = %s '
+									+ 'AND '
+								+ 'volume = %s', [
+													setor[0].id,
+													tipo,
+													ano,
+													volume - 1,
+													])
+
+		cursor_postgresql.execute('INSERT INTO livro '
+									+ '(fk_setor, tipo, ano, volume, encerrado) '
+								+ 'VALUES '
+									+ '(%s, %s, %s, %s, false)', [
+																	setor[0].id,
+																	tipo,
+																	ano,
+																	volume,
+																	])
+
+		cursor_postgresql.execute('UPDATE livro SET '
+									+ 'encerrado = true '
+								+ 'WHERE '
+									+ 'fk_setor = %s '
+										+ 'AND '
+									+ 'tipo = %s '
+										+ 'AND '
+									+ 'ano = %s '
+										+ 'AND '
+									+ 'volume = %s', [
+														setor[0].id,
+														tipo,
+														ano,
+														volume - 1,
+														])
+
 		messages.add_message(request, messages.SUCCESS, "Protocolo cadastrado com sucesso")
 		return redirect(reverse('inout:novo_protocolo'))
 
@@ -564,8 +656,8 @@ def salvar_protocolo(request):
 
 @login_required
 def lista_protocolos_externos(request):
-	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 1', [lotacao_user[0].fk_setor.id])
+	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	livros_de_protocolo = Livro.objects.using('default').raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 1', [lotacao_user[0].fk_setor.id])
 
 	context = {
 		'titulo': "Protocolos externos",
@@ -576,8 +668,8 @@ def lista_protocolos_externos(request):
 
 @login_required
 def lista_protocolos_internos(request):
-	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 2', [lotacao_user[0].fk_setor.id])
+	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	livros_de_protocolo = Livro.objects.using('default').raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 2', [lotacao_user[0].fk_setor.id])
 
 	context = {
 		'titulo': "Protocolos internos",
@@ -588,8 +680,8 @@ def lista_protocolos_internos(request):
 
 @login_required
 def lista_protocolos_usf(request):
-	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 3', [lotacao_user[0].fk_setor.id])
+	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	livros_de_protocolo = Livro.objects.using('default').raw('SELECT * FROM livro WHERE fk_setor = %s AND tipo = 3', [lotacao_user[0].fk_setor.id])
 
 	context = {
 		'titulo': "Protocolos USF",
@@ -599,23 +691,28 @@ def lista_protocolos_usf(request):
 	return render(request, 'inout/lista_protocolos.html', context)
 
 #View Generica
-class lista_protocolos(ListView):
+""" class lista_protocolos(ListView):
 	model = Livro
-	template_name = 'inout/lista_protocolos_internos.html',
+	template_name = 'inout/lista_protocolos_internos.html', """
 
 @login_required
 def protocolar_documento(request):
 	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE documento.id NOT IN (SELECT DISTINCT fk_documento FROM protocolo)')
 	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE NOT EXISTS (SELECT DISTINCT fk_documento FROM protocolo WHERE protocolo.fk_documento = documento.id)')
-	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
 	#lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN lotacao ON lotacao.fk_user = documento.fk_user WHERE fk_setor = %s', [lotacao_user[0].fk_setor.id])
-	documentos_disponiveis = Documento.objects.raw('SELECT doc.* FROM documento doc '
-													+ 'LEFT OUTER JOIN protocolo prot ON doc.id = prot.fk_documento '
-													+ 'INNER JOIN lotacao ON lotacao.fk_user = doc.fk_user '
-													+ 'WHERE fk_setor = %s AND prot.fk_documento IS null', [lotacao_user[0].fk_setor.id])
-	livros_de_protocolo = Livro.objects.raw('SELECT * FROM livro WHERE fk_setor = %s AND encerrado = false', [lotacao_user[0].fk_setor.id])
-	lotacao_do_usuario_logado = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	lista_de_setores = Setor.objects.raw('SELECT * FROM setor WHERE fk_orgao = %s', [lotacao_do_usuario_logado[0].fk_setor.fk_orgao.id])
+	documentos_disponiveis = Documento.objects.using('default').raw('SELECT doc.* FROM documento doc '
+																	+ 'LEFT OUTER JOIN protocolo prot ON doc.id = prot.fk_documento '
+																	+ 'INNER JOIN lotacao ON lotacao.fk_user = doc.fk_user '
+																	+ 'WHERE '
+																		+ 'fk_setor = %s '
+																			+ 'AND '
+																		+ 'prot.fk_documento IS null', [
+																										lotacao_user[0].fk_setor.id
+																										])
+	livros_de_protocolo = Livro.objects.using('default').raw('SELECT * FROM livro WHERE fk_setor = %s AND encerrado = false', [lotacao_user[0].fk_setor.id])
+	lotacao_do_usuario_logado = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	lista_de_setores = Setor.objects.using('default').raw('SELECT * FROM setor WHERE fk_orgao = %s', [lotacao_do_usuario_logado[0].fk_setor.fk_orgao.id])
 
 	context = {
 		'titulo': "Protocolar documento",
@@ -628,28 +725,72 @@ def protocolar_documento(request):
 
 @login_required
 def salvar_protocolo_documento(request):
-	lotacao_do_usuario_logado = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
+	lotacao_do_usuario_logado = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
 	numero_pagina = request.POST.get("pagina", False)
-	pagina = Pagina.objects.raw('SELECT * FROM pagina WHERE numero = %s AND fk_livro = %s', [numero_pagina, request.POST.get("livro", False)])
+	pagina = Pagina.objects.using('default').raw('SELECT * FROM pagina WHERE numero = %s AND fk_livro = %s', [numero_pagina, request.POST.get("livro", False)])
 	
 	if pagina:
-		pagina_id = pagina[0].id
+		pagina_id_mysql = pagina[0].id
+		pagina_id_postgresql = pagina[0].id
 
 	else:
-		with connection.cursor() as cursor:
-			cursor.execute('INSERT INTO pagina (fk_livro, numero) VALUES (%s, %s)', [request.POST.get("livro", False), numero_pagina])
-			cursor.execute('SELECT MAX(id) FROM pagina')
-			pagina_id = cursor.fetchone()[0]
+		#with connection.cursor() as cursor:
+		cursor_mysql.execute('INSERT INTO pagina '
+								+ '(fk_livro, numero) '
+							+ 'VALUES '
+								+ '(%s, %s)', [
+												request.POST.get("livro", False),
+												numero_pagina
+												])
 
-	with connection.cursor() as cursor:
-		cursor.execute('INSERT INTO protocolo (fk_documento, fk_setor_origem, fk_setor_destino, fk_pagina, entregue) VALUES (%s, %s, %s, %s, false)', [
-																																					request.POST.get("documento", False),
-																																					lotacao_do_usuario_logado[0].fk_setor.id,
-																																					request.POST.get("setor_destino", False),
-																																					pagina_id,
-																																					])
+		cursor_mysql.execute('SELECT MAX(id) FROM pagina')
+		pagina_id_mysql = cursor_mysql.fetchone()[0]
+
+		cursor_postgresql.execute('INSERT INTO pagina '
+									+ '(fk_livro, numero) '
+								+ 'VALUES '
+									+ '(%s, %s)', [
+													request.POST.get("livro", False),
+													numero_pagina
+													])
+
+		cursor_postgresql.execute('SELECT MAX(id) FROM pagina')
+		pagina_id_postgresql = cursor_postgresql.fetchone()[0]
+
+	#with connection.cursor() as cursor:
+	cursor_mysql.execute('INSERT INTO protocolo '
+							+ '(fk_documento, fk_setor_origem, fk_setor_destino, fk_pagina, entregue) '
+						+ 'VALUES '
+							+ '(%s, %s, %s, %s, false)', [
+															request.POST.get("documento", False),
+															lotacao_do_usuario_logado[0].fk_setor.id,
+															request.POST.get("setor_destino", False),
+															pagina_id_mysql,
+															])
+
+	cursor_postgresql.execute('INSERT INTO protocolo '
+								+ '(fk_documento, fk_setor_origem, fk_setor_destino, fk_pagina, entregue) '
+							+ 'VALUES '
+								+ '(%s, %s, %s, %s, false)', [
+																request.POST.get("documento", False),
+																lotacao_do_usuario_logado[0].fk_setor.id,
+																request.POST.get("setor_destino", False),
+																pagina_id_postgresql,
+																])
 
 	return redirect(reverse('inout:index'))
+
+@login_required
+def busca_numero_documento(request):
+	numero_do_documento = request.POST.get('numero_do_documento', False)
+	resultado_da_busca = Documento.objects.using('default').raw('SELECT * FROM documento WHERE numero LIKE %s', ['%' + numero_do_documento + '%'])
+
+	context = {
+		'titulo': 'Resultado da busca por',
+		'lista_de_documentos': resultado_da_busca,
+	}
+
+	return render(request, 'inout/listardocumentos.html', context)
 
 def error_404_view(request, exception):
     
@@ -743,21 +884,21 @@ class chart_data_pie(APIView):
 
 
 def prazos_do_dia():
-	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN prazo ON prazo.fk_documento = documento.id WHERE prazo.vencimento = %s', [datetime.date.today()])
+	lista_de_documentos = Documento.objects.using('default').raw('SELECT * FROM documento INNER JOIN prazo ON prazo.fk_documento = documento.id WHERE prazo.vencimento = %s', [datetime.date.today()])
 	#lista_de_documentos = Documento.objects.filter(prazo__vencimento = datetime.date.today())
 
 	return lista_de_documentos
 
 #Retorna todos os documentos cadastrados no dia de hoje
 def documentos_do_dia():
-	feitos_hoje = Documento.objects.raw('SELECT * FROM documento WHERE documento.data_de_recebimento = %s', [datetime.date.today()])
+	feitos_hoje = Documento.objects.using('default').raw('SELECT * FROM documento WHERE documento.data_de_recebimento = %s', [datetime.date.today()])
 	#feitos_hoje = Documento.objects.filter(data_de_recebimento__day = datetime.date.today().day)
 
 	return feitos_hoje
 
 #Retorna todos os documentos cadastrados na semana atual
 def documentos_da_semana():
-	feitos_semana = Documento.objects.raw('SELECT * FROM documento WHERE WEEK(data_de_recebimento) = WEEK(%s)', [datetime.date.today()])
+	feitos_semana = Documento.objects.using('default').raw('SELECT * FROM documento WHERE WEEK(data_de_recebimento) = WEEK(%s)', [datetime.date.today()])
 	#feitos_semana = Documento.objects.raw('SELECT * FROM documento WHERE WEEK(data_de_recebimento) = %s', [datetime.date.today().isocalendar()[1]])
 	#feitos_semana = Documento.objects.filter(data_de_recebimento__week = datetime.date.today().isocalendar()[1])
 
@@ -765,7 +906,7 @@ def documentos_da_semana():
 
 #Retorna todos os documentos cadastrados no mês atual
 def documentos_do_mes():
-	feitos_mes = Documento.objects.raw('SELECT * FROM documento WHERE MONTH(data_de_recebimento) = %s', [datetime.date.today().month])
+	feitos_mes = Documento.objects.using('default').raw('SELECT * FROM documento WHERE MONTH(data_de_recebimento) = %s', [datetime.date.today().month])
 	#feitos_mes = Documento.objects.filter(data_de_recebimento__month = datetime.date.today().month)
 
 	return feitos_mes

@@ -132,7 +132,6 @@
             <a class="collapse-item" href="{% url 'inout:lista_protocolos_externos' %}">Externos</a>
             <a class="collapse-item" href="{% url 'inout:lista_protocolos_internos' %}">Internos</a>
             <a class="collapse-item" href="{% url 'inout:lista_protocolos_usf' %}">USF</a>
-            <a class="collapse-item" href="{% url 'inout:lista_protocolos' %}">Todos</a>
           </div>
         </div>
       </li>
@@ -189,11 +188,12 @@
           </button>
 
           <!-- Topbar Search -->
-          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="{% url 'inout:busca_numero_documento' %}" method="POST">
+            {% csrf_token %}
             <div class="input-group">
-              <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar Documento..." aria-label="Search" aria-describedby="basic-addon2">
+              <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar Documento..." aria-label="Search" aria-describedby="basic-addon2" name="numero_do_documento">
               <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary" type="submit">
                   <i class="fas fa-search fa-sm"></i>
                 </button>
               </div>
