@@ -47,7 +47,7 @@ urlpatterns = [
 	re_path(r'^lista_protocolos_externos', views.lista_protocolos_externos , name = "lista_protocolos_externos"),
 	re_path(r'^lista_protocolos_internos', views.lista_protocolos_internos , name = "lista_protocolos_internos"),
 	re_path(r'^lista_protocolos_usf', views.lista_protocolos_usf , name = "lista_protocolos_usf"),
-	#re_path(r'^lista_protocolos', lista_protocolos.as_view(), name = "lista_protocolos"),
+	re_path(r'^lista_protocolos', views.lista_protocolos.as_view(), name = "lista_protocolos"),
 	re_path(r'^busca_numero_documento', views.busca_numero_documento, name = 'busca_numero_documento'),
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
 	url(r'^api/chart/pie/$', views.chart_data_pie.as_view()),

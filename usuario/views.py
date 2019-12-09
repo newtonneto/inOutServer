@@ -1,3 +1,4 @@
+from django.views.generic import ListView
 from django.shortcuts import render, redirect
 from inout.models import Lotacao, Orgao, Setor
 from django.contrib import messages
@@ -85,11 +86,15 @@ def salva_usuario(request):
 
     return redirect(reverse('inout:index'))
 
-@login_required
+""" @login_required
 def lista_usuarios(request):
 
 	context = {
 		'titulo': "Lista de usuários cadastrados",
 	}
 
-	return render(request, 'usuario/lista_usuarios.html', context)
+	return render(request, 'usuario/lista_usuarios.html', context) """
+
+class lista_usuarios(ListView):
+	model = Lotacao
+	template_name = 'usuario/lista_usuarios.html'

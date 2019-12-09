@@ -8,7 +8,6 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from django.template import loader
 from .models import Documento, Prazo, Processo, Orgao, Setor, Livro, Pagina, Protocolo, Lotacao
-#from django.db import connection
 from django.db import connections
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
@@ -37,10 +36,8 @@ def valida_login(request):
 
 		if next:
 			return redirect(reverse("{}{}".format('inout:', next.replace('/', '').replace('.html', ''))))
-			#return render(request, "{}{}{}".format('inout', next, '.html'))
 		else:
 			return redirect(reverse('inout:index'))
-			#return HttpResponseRedirect(request.GET('next'))
 	else:
 		erro = {
 			'erro': "Credenciais Inválidas",
@@ -117,7 +114,6 @@ def salvarcadastro(request):
 		documento.assunto = request.POST['assunto_do_documento']
 		documento.despacho = request.POST['despacho_do_documento'] """
 
-		#with connection.cursor() as cursor:
 		cursor_mysql.execute('INSERT INTO documento '
 								+ '(fk_user, data_de_recebimento, tipo, numero, emissor, assunto, despacho, entrega_pessoal) '
 							+ 'VALUES '
@@ -224,7 +220,6 @@ def salvarcadastro(request):
 			prazo_data = request.POST.get(data, False)
 
 			if prazo_tipo and prazo_data:
-			#with connection.cursor() as cursor:
 				cursor_mysql.execute('INSERT INTO prazo '
 										+ '(fk_documento, tipo, vencimento, encerrado, dilacao) '
 									+ 'VALUES '
@@ -265,7 +260,6 @@ def editar_documento(request, documento_id):
 
 def salvar_edicao_documento(request, documento_id):
 	if request.method == "POST":
-		#with connection.cursor() as cursor:
 		cursor_mysql.execute('UPDATE documento SET '
 								+ 'tipo = %s, '
 								+ 'numero = %s, '
@@ -305,7 +299,6 @@ def salvar_edicao_documento(request, documento_id):
 def listardocumentos(request):
 	#lista_de_documentos = Documento.objects.order_by('data_de_recebimento')
 	lotacao_user = Lotacao.objects.raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	#lista_de_documentos = Documento.objects.raw('SELECT * FROM documento ORDER BY data_de_recebimento')
 	lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN lotacao ON lotacao.fk_user = documento.fk_user WHERE fk_setor = %s', [lotacao_user[0].fk_setor.id])
 
 	contexto = {
@@ -375,7 +368,6 @@ def detalhesdocumento(request, documento_id):
 
 @login_required
 def documento_entregue(request, protocolo_documento_id):
-	#with connection.cursor() as cursor:
 	cursor_mysql.execute('UPDATE protocolo SET '
 							+ 'entregue = true, '
 							+ 'data_da_entrega = %s '
@@ -469,7 +461,6 @@ def salvar_orgao(request):
 		orgao.municipio = municipio
 		orgao.save() """
 
-		#with connection.cursor() as cursor:
 		cursor_mysql.execute('INSERT INTO orgao '
 								+ '(nome, sigla, esfera, estado, municipio, ativo) '
 							+ 'VALUES '
@@ -481,7 +472,6 @@ def salvar_orgao(request):
 																	municipio,
 																])
 
-		#with connections['postgresql'].cursor() as cursor:
 		cursor_postgresql.execute('INSERT INTO orgao '
 									+ '(nome, sigla, esfera, estado, municipio, ativo) '
 								+ 'VALUES '
@@ -529,7 +519,6 @@ def salvar_setor(request):
 	orgao = request.POST.get("orgao", False)
 
 	if nome and sigla and orgao:
-	#with connection.cursor() as cursor:
 		cursor_mysql.execute('INSERT INTO setor '
 								+ '(fk_orgao, nome, sigla, ativo) '
 							+ 'VALUES '
@@ -594,7 +583,6 @@ def salvar_protocolo(request):
 		volume = 1
 
 	if ano and volume and setor[0].id and tipo:
-		#with connection.cursor() as cursor:
 		cursor_mysql.execute('INSERT INTO livro '
 								+ '(fk_setor, tipo, ano, volume, encerrado) '
 							+ 'VALUES '
@@ -624,7 +612,7 @@ def salvar_protocolo(request):
 		cursor_postgresql.execute('INSERT INTO livro '
 									+ '(fk_setor, tipo, ano, volume, encerrado) '
 								+ 'VALUES '
-									+ '(%s, %s, %s, %s, false)', [
+									+ '(%s, %s, %s, %s, 0)', [
 																	setor[0].id,
 																	tipo,
 																	ano,
@@ -632,7 +620,7 @@ def salvar_protocolo(request):
 																	])
 
 		cursor_postgresql.execute('UPDATE livro SET '
-									+ 'encerrado = true '
+									+ 'encerrado = 1 '
 								+ 'WHERE '
 									+ 'fk_setor = %s '
 										+ 'AND '
@@ -661,7 +649,7 @@ def lista_protocolos_externos(request):
 
 	context = {
 		'titulo': "Protocolos externos",
-		'livros_de_protocolo': livros_de_protocolo,
+		'livro_list': livros_de_protocolo,
 	}
 
 	return render(request, 'inout/lista_protocolos.html', context)
@@ -673,7 +661,7 @@ def lista_protocolos_internos(request):
 
 	context = {
 		'titulo': "Protocolos internos",
-		'livros_de_protocolo': livros_de_protocolo,
+		'livro_list': livros_de_protocolo,
 	}
 
 	return render(request, 'inout/lista_protocolos.html', context)
@@ -685,22 +673,22 @@ def lista_protocolos_usf(request):
 
 	context = {
 		'titulo': "Protocolos USF",
-		'livros_de_protocolo': livros_de_protocolo,
+		'livro_list': livros_de_protocolo,
 	}
 
 	return render(request, 'inout/lista_protocolos.html', context)
 
 #View Generica
-""" class lista_protocolos(ListView):
+class lista_protocolos(ListView):
 	model = Livro
-	template_name = 'inout/lista_protocolos_internos.html', """
+	template_name = 'inout/lista_protocolos.html'
 
 @login_required
 def protocolar_documento(request):
-	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE documento.id NOT IN (SELECT DISTINCT fk_documento FROM protocolo)')
-	#documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE NOT EXISTS (SELECT DISTINCT fk_documento FROM protocolo WHERE protocolo.fk_documento = documento.id)')
+	#//documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE documento.id NOT IN (SELECT DISTINCT fk_documento FROM protocolo)')
+	#//documentos_disponiveis = Documento.objects.raw('SELECT * FROM documento WHERE NOT EXISTS (SELECT DISTINCT fk_documento FROM protocolo WHERE protocolo.fk_documento = documento.id)')
+	#//lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN lotacao ON lotacao.fk_user = documento.fk_user WHERE fk_setor = %s', [lotacao_user[0].fk_setor.id])
 	lotacao_user = Lotacao.objects.using('default').raw('SELECT * FROM lotacao WHERE fk_user = %s', [request.user.id])
-	#lista_de_documentos = Documento.objects.raw('SELECT * FROM documento INNER JOIN lotacao ON lotacao.fk_user = documento.fk_user WHERE fk_setor = %s', [lotacao_user[0].fk_setor.id])
 	documentos_disponiveis = Documento.objects.using('default').raw('SELECT doc.* FROM documento doc '
 																	+ 'LEFT OUTER JOIN protocolo prot ON doc.id = prot.fk_documento '
 																	+ 'INNER JOIN lotacao ON lotacao.fk_user = doc.fk_user '
@@ -734,7 +722,6 @@ def salvar_protocolo_documento(request):
 		pagina_id_postgresql = pagina[0].id
 
 	else:
-		#with connection.cursor() as cursor:
 		cursor_mysql.execute('INSERT INTO pagina '
 								+ '(fk_livro, numero) '
 							+ 'VALUES '
@@ -757,7 +744,6 @@ def salvar_protocolo_documento(request):
 		cursor_postgresql.execute('SELECT MAX(id) FROM pagina')
 		pagina_id_postgresql = cursor_postgresql.fetchone()[0]
 
-	#with connection.cursor() as cursor:
 	cursor_mysql.execute('INSERT INTO protocolo '
 							+ '(fk_documento, fk_setor_origem, fk_setor_destino, fk_pagina, entregue) '
 						+ 'VALUES '
@@ -800,8 +786,11 @@ def error_500_view(request):
     
     return render(request,'inout/500.html')
 
-##### FALTA IMPLEMENTAR #####
 
+#####* FALTA IMPLEMENTAR #####
+
+
+#TODO Busca avançada de documento, com uso de filtros
 @login_required
 def busca_avancada(request):
 
@@ -812,7 +801,7 @@ def busca_avancada(request):
 	return render(request, 'inout/busca_avancada.html', context)
 
 
-##### DADOS DOS GRÁFICOS - criar arquivo
+#####* DADOS DOS GRÁFICOS - criar arquivo
 
 
 class chart_data_linha(APIView):
@@ -854,10 +843,10 @@ class chart_data_pie(APIView):
 			len(Documento.objects.filter(tipo = 5)),
 			len(Documento.objects.filter(tipo = 6)),
 			len(Documento.objects.exclude(tipo = 9).exclude(tipo = 10).exclude(tipo = 5).exclude(tipo = 6)),
-			#len(Documento.objects.filter(tipo_de_documento = "Requerimento")),
-			#len(Documento.objects.filter(tipo_de_documento = "Mandado de Intimação")),
-			#len(Documento.objects.filter(tipo_de_documento = "Notificação")),
-			#len(Documento.objects.filter(tipo_de_documento = "Documento")),
+			#//len(Documento.objects.filter(tipo_de_documento = "Requerimento")),
+			#//len(Documento.objects.filter(tipo_de_documento = "Mandado de Intimação")),
+			#//len(Documento.objects.filter(tipo_de_documento = "Notificação")),
+			#//len(Documento.objects.filter(tipo_de_documento = "Documento")),
 		]
 
 		tiposDeDocumento = [
@@ -866,10 +855,10 @@ class chart_data_pie(APIView):
 			"Memorando",
 			"Memorando Circular",
 			"Outros",
-			#"Requerimento",
-			#"Mandado de Intimação",
-			#"Notificação",
-			#"Documento",
+			#//"Requerimento",
+			#//"Mandado de Intimação",
+			#//"Notificação",
+			#//"Documento",
 		]
 
 		dados_grafico_pie = {
@@ -880,7 +869,7 @@ class chart_data_pie(APIView):
 		return Response(dados_grafico_pie)
 
 
-##### FUNÇÕES - criar arquivo
+#####* FUNÇÕES - criar arquivo
 
 
 def prazos_do_dia():

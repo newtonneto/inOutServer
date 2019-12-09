@@ -24,13 +24,19 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {% for livro in livros_de_protocolo %}
+                      {% for livro in livro_list %}
                         <tr>
                           <td>{{ livro.fk_setor.sigla }}</td>
                           <td>{{ livro.ano }}</td>
                           <td>{{ livro.tipo_do_livro }}</td>
                           <td>{{ livro.volume }}</td>
-                          <td>{{ livro.encerrado }}</td>
+                          <td>
+                            {% if livro.encerrado == 1 %}
+                              <img src="https://img.icons8.com/cute-clipart/32/000000/checked.png">
+                            {% else %}
+                            <img src="https://img.icons8.com/cute-clipart/32/000000/cancel.png">
+                            {% endif %}
+                          </td>
                         </tr>
                       {% endfor %}
                     </tbody>

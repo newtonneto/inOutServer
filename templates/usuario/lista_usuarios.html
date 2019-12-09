@@ -1,24 +1,49 @@
-{% load staticfiles %}
-{% include "header.html" %}
-
+        {% extends 'base.html' %}
+        {% block content %}
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">{{ titulo }}</h1>
-          <div class="col-lg-12 mb-4">
-            <div class="card shadow mb-4">
-              <div class="col-lg-7">
-                <div class="p-5">
-                  
-                </div>
+          <h1 class="h3 mb-2 text-gray-800">{{ titulo }}</h1>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Resultados</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="display" id="tabela_datatables" >
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Email</th>
+                      <th>Órgão</th>
+                      <th>Setor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for lotacao in lotacao_list %}
+                      <tr>
+                        <td>{{ lotacao.fk_user.first_name }}</td>
+                        <td>{{ lotacao.fk_user.email }}</a></td>
+                        <td>{{ lotacao.fk_setor.fk_orgao }}</td>
+                        <td>{{ lotacao.fk_setor }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Email</th>
+                      <th>Órgão</th>
+                      <th>Setor</th>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
             </div>
           </div>
         </div>
         <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-{% include "footer.html" %}
+        {% endblock %}

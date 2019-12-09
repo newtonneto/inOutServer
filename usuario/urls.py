@@ -6,5 +6,6 @@ app_name = "usuario"
 urlpatterns = [
     re_path(r'^cadastro_usuario/', views.cadastro_usuario, name = 'cadastro_usuario'),
     re_path(r'^salva_usuario/', views.salva_usuario, name = 'salva_usuario'),
-    re_path(r'^lista_usuarios', views.lista_usuarios, name = "lista_usuarios"),
+    #re_path(r'^lista_usuarios', views.lista_usuarios, name = "lista_usuarios"),
+    re_path(r'^lista_usuarios', views.lista_usuarios.as_view(), name = "lista_usuarios"),
 ]
