@@ -18,22 +18,31 @@
                     <tr>
                       <th>Sigla</th>
                       <th>Nome</th>
+                      <th>Esfera</th>
+                      <th>Município</th>
+                      <th>Ativo</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Sigla</th>
-                      <th>Nome</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                     {% for orgao in lista_de_orgaos %}
                       <tr>
                         <td>{{ orgao.sigla }}</td>
-                        <td>{{ orgao.nome }}</a></td>
+                        <td>{{ orgao.nome }}</td>
+                        <td>{{ orgao.esfera }}</td>
+                        <td>{{ orgao.municipio }}/{{ orgao.estado }}</td>
+                        <td>{{ orgao.ativo }}</td>
                       </tr>
                     {% endfor %}
                   </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Sigla</th>
+                      <th>Nome</th>
+                      <th>Esfera</th>
+                      <th>Município</th>
+                      <th>Ativo</th>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>

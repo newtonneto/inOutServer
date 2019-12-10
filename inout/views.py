@@ -378,7 +378,7 @@ def documento_entregue(request, protocolo_documento_id):
 											])
 
 	cursor_postgresql.execute('UPDATE protocolo SET '
-								+ 'entregue = true, '
+								+ 'entregue = 1, '
 								+ 'data_da_entrega = %s '
 							+ 'WHERE '
 								+ 'id = %s', [
@@ -757,7 +757,7 @@ def salvar_protocolo_documento(request):
 	cursor_postgresql.execute('INSERT INTO protocolo '
 								+ '(fk_documento, fk_setor_origem, fk_setor_destino, fk_pagina, entregue) '
 							+ 'VALUES '
-								+ '(%s, %s, %s, %s, false)', [
+								+ '(%s, %s, %s, %s, 0)', [
 																request.POST.get("documento", False),
 																lotacao_do_usuario_logado[0].fk_setor.id,
 																request.POST.get("setor_destino", False),
