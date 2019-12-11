@@ -52,5 +52,6 @@ urlpatterns = [
 	url(r'^api/chart/data/$', views.chart_data_linha.as_view()),
 	url(r'^api/chart/pie/$', views.chart_data_pie.as_view()),
 	#Falta implementar
-	re_path(r'^busca_avancada', views.busca_avancada , name = "busca_avancada"),
+	#re_path(r'^busca_avancada', views.busca_avancada , name = "busca_avancada"),
+	re_path(r'^busca_avancada', views.busca_avancada.as_view() , name = "busca_avancada"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

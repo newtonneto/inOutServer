@@ -95,6 +95,7 @@ def lista_usuarios(request):
 
 	return render(request, 'usuario/lista_usuarios.html', context) """
 
+@method_decorator(login_required, name='dispatch')
 class lista_usuarios(ListView):
 	model = Lotacao
 	template_name = 'usuario/lista_usuarios.html'

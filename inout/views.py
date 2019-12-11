@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -679,6 +679,7 @@ def lista_protocolos_usf(request):
 	return render(request, 'inout/lista_protocolos.html', context)
 
 #View Generica
+@method_decorator(login_required, name='dispatch')
 class lista_protocolos(ListView):
 	model = Livro
 	template_name = 'inout/lista_protocolos.html'
@@ -791,14 +792,18 @@ def error_500_view(request):
 
 
 #TODO Busca avançada de documento, com uso de filtros
-@login_required
+""" @login_required
 def busca_avancada(request):
 
 	context = {
 		'titulo': "Busca avançada",
 	}
 
-	return render(request, 'inout/busca_avancada.html', context)
+	return render(request, 'inout/busca_avancada.html', context) """
+
+@method_decorator(login_required, name='dispatch')
+class busca_avancada(TemplateView):
+	template_name = "inout/busca_avancada.html"
 
 
 #####* DADOS DOS GRÁFICOS - criar arquivo
